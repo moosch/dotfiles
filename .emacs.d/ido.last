@@ -1,0 +1,91 @@
+;;; -*- coding: utf-8 -*-
+
+;; ----- ido-last-directory-list -----
+(
+ ("/Users/moosch/Code/moosch/moosch_io/" . "holding/")
+ ("/Users/moosch/Code/moosch/" . "moosch_io/")
+ ("/Users/moosch/Aurelius/repos/" . "aurelius-universe/")
+ ("/Users/moosch/Aurelius/" . "repos/")
+ ("/Users/moosch/Code/cpp/" . "ogl/")
+ ("/Users/moosch/Code/lisp/" . "playground/")
+ ("/Users/" . "moosch/")
+ ("/Users/moosch/Code/lua/ray-tracer/tests/" . "tools/")
+ ("/Users/moosch/Code/lua/ray-tracer/" . "tools/")
+ ("/Users/moosch/Code/" . "lisp/")
+ ("/Users/moosch/Code/lua/" . "ray-tracer/")
+ ("/Users/moosch/.emacs.d/" . "init/")
+ ("/Users/moosch/" . ".emacs.d/")
+)
+
+;; ----- ido-work-directory-list -----
+(
+ "/Users/moosch/.emacs.d/"
+ "/Users/moosch/Code/lua/ray-tracer/"
+ "/Users/moosch/Code/lua/ray-tracer/tools/"
+ "/Users/moosch/Code/lua/ray-tracer/tests/tools/"
+ "/Users/moosch/.emacs.d/init/"
+)
+
+;; ----- ido-work-file-list -----
+(
+ "init.el"
+ "projectile-bookmarks.eld"
+ ".gitignore"
+ "projectile.lua"
+ "projectile_canvas.lua"
+ "canvas.lua"
+ "table.lua"
+ "string.lua"
+ "tuple.lua"
+ "ppm.lua"
+)
+
+;; ----- ido-dir-file-cache -----
+(
+ ("/Users/moosch/.emacs.d/" (25235 29671 933706 262000) ".cache/" "moosch-theme-theme.el" "backup/" "doom-emacs/" "elpa/" "spacemacs/" "init.bk.el" "init.el" "url/" "auto-save-list/" "custom.el" "transient/" "projectile-bookmarks.eld" "ido.last~" ".extension/" "eshell/" "init.el~" "ido.last" "init/" "../" "./")
+
+ ("/Users/moosch/Code/lua/ray-tracer/tests/tools/" (25174 50279 546966 361000) "canvas.lua" "tuple.lua" "matrix.lua" "../" "./")
+
+ ("/Users/moosch/Code/lua/ray-tracer/tools/" (25198 25794 447968 397000) "canvas.lua" "table.lua" "string.lua" "tuple.lua" "matrix.lua" "fuzzy_eq.lua" "ppm.lua" "translation.lua" "../" "./")
+
+ ("/Users/moosch/" (25235 27765 56023 772000) ".slime/" "arangodb.log" ".zowe/" ".asdfrc" ".smex-items" ".zsh_sessions/" ".viminfo" ".bash_history" "Aurelius/" ".gitconfig" ".aws/" ".cache/" "Downloads/" ".oh-my-zsh/" ".Xauthority" "AndroidStudioProjects/" ".aws-sam/" ".swiftpm/" ".gem/" ".aspell.en.pws" ".bash_profile" ".m2/" ".vscode/" "quicklisp.lisp" ".roswell/" "PixelArt/" "Documents/" "Obsidian/" ".npm/" ".zcompdump" ".aspell.en.prepl" ".slime-history.eld" ".Trash/" ".cookiecutter_replay/" "Dropbox/" ".flutter-devtools/" ".degit/" ".gradle/" ".profile" "Applications/" ".vimrc" "Movies/" ".ssh/" ".rustup/" "rename_files_regex.md" "Android/" ".vysor/" ".flutter" "list.csv" ".zshenv" ".emacs_bk" ".dropbox/" "Public/" ".mplayer/" ".zcompdump-Ryan’s MacBook Pro-5.8" ".cocoapods/" ".android/" ".cargo/" ".node_repl_history" ".quicklisp/" ".emacs.d/" "google-cloud-sdk/" ".emulator_console_auth_token" ".doom.d/" ".lesshst" "Library/" "Lispings/" "Desktop/" ".zsh_history" ".asdf/" ".flutter_tool_state" ".boto" "Code/" "Postman/" ".pub-cache/" ".openjfx/" ".dartServer/" ".tool-versions" ".zprofile" ".zshrc.backup" "Pictures/" ".psql_history" ".local/" ".knownPackages" ".mix/" ".sbclrc" ".slime_paste" "Van Progress/" ".zshrc" "development/" "bin/" ".CFUserTextEncoding" ".yarnrc" ".thumbnails/" ".gnupg/" ".DS_Store" "go/" ".cdk/" ".dart/" ".vim/" "docker/" ".node-gyp/" ".zcompdump-Ryan’s MacBook Pro-5.7.1" ".lem/" ".gsutil/" ".docker/" "BoostNote/" "Music/" ".config/" ".hex/" "vim/" ".lispworks-config/" "../" "./")
+
+ ("/Users/moosch/Code/lisp/playground/" (25235 26411 984761 761000) "scratchpad.lisp" "#hello-world#" "typeclasses/" "fun.lisp~" "fun.fasl" "adhoc.lisp" "fun.lisp" ".DS_Store" "../" "./")
+
+ ("/Users/moosch/Code/lisp/" (25225 10370 37979 100000) "learning/" "playground/" "koans/" ".DS_Store" "../" "./")
+
+ ("/Users/moosch/Code/" (25235 26325 462887 492000) "go-chat/" "godot/" "c/" "JavaScript/" "moosch/" "cpp/" "flutter/" "blockchain/" "lua/" "crystal/" "rust/" "ArangoDB/" "dart/" "elixir/" "racket/" ".DS_Store" "go/" "lisp/" "zig/" "prolog/" "../" "./")
+
+ ("/Users/moosch/Code/lua/ray-tracer/" (25235 22395 309449 880000) ".git/" "examples/" ".gitignore" "README.md" "libs/" "tests/" ".DS_Store" "tools/" "../" "./")
+
+ ("/Users/moosch/Code/moosch/moosch_io/holding/" (24640 17062 465342 45000) "firebase.json" "default.conf" ".gitignore" "public/" "README.md" ".firebaserc" "Dockerfile" ".firebase/" ".DS_Store" "../" "./")
+
+ ("/Users/moosch/Code/moosch/moosch_io/" (24429 12534 0 0) "holding/" "../" "./")
+
+ ("/Users/moosch/Code/moosch/" (24917 43857 625727 979000) "moosch_io/" "github/" "stream_state/" "projects/" ".DS_Store" "../" "./")
+
+ ("/Users/moosch/Code/c/" (25164 4807 5683 896000) "main.c" "a.out" "../" "./")
+
+ ("/Users/moosch/Aurelius/repos/aurelius-universe/" (25162 36678 944659 943000) ".eslintrc.json" "apps/" "tmp/" ".git/" "migrations.json" "docker-compose.yml" "db/" "GitFlow.md" ".prettierrc" ".github/" "package.json" "package-lock.json" ".gitignore" "yarn.lock" "README.md" "libs/" ".editorconfig" ".prettierignore" "node_modules/" ".eslintrc" "jest.config.js" "sendgrid-test/" "dist/" "tsconfig.base.json" "bin/" ".nxignore" ".DS_Store" "docker/" "tools/" "workspace.json" "nx.json" "jest.preset.js" "../" "./")
+
+ ("/Users/moosch/Aurelius/repos/" (25108 25006 676800 68000) "onboarding/" "GetStream/" "creds/" "arpi_env_backups" "aurelius-universe/" "original site/" "flutter_bk/" "staging_remote_config.json" "lived-universe/" "rename_tester/" "arli-firebase/" "flutter/" "arli-cms/" "intercom.html" "docker_flutter/" "universe-ec2s/" "emails/" "cdk-typescript-lambda/" "docker_test/" "chat/" "intercom-test/" "svelted/" ".DS_Store" "unilinks/" "in-app-purchases/" "temp-universe/" "prod_remote_config.json" "lived-infra/" "gradient/" "jwt/" "../" "./")
+
+ ("/Users/moosch/Aurelius/" (25025 21936 439414 363000) "bin/" ".DS_Store" "repos/" "../" "./")
+
+ ("/Users/moosch/Code/cpp/ogl/" (25162 54244 361306 824000) "tutorial13_normal_mapping/" "tutorial17_rotations/" "tutorial11_2d_fonts/" "tutorial03_matrices/" ".git/" "misc01_math_cheatsheet/" "external/" "BUILDING.txt" "tutorial12_extensions/" "tutorial07_model_loading/" "tutorial05_textured_cube/" ".gitignore" "misc04_building_your_own_app/" "common/" "tutorial15_lightmaps/" "distrib/" "tutorial08_basic_shading/" "tutorial10_transparency/" "tutorial18_billboards_and_particles/" "tutorial16_shadowmaps/" "tutorial04_colored_cube/" ".hgignore" "Makefile" "bin/" "playground/" "tutorial01_first_window/" "CMakeLists.txt" "tutorial14_render_to_texture/" "tutorial02_red_triangle/" "tutorial06_keyboard_and_mouse/" "tutorial09_vbo_indexing/" "misc05_picking/" "../" "./")
+
+ ("/Users/moosch/Code/cpp/" (25162 53087 780126 386000) "ogl/" "../" "./")
+
+ ("/cores/" (24321 27333 0 0) "../" "./")
+
+ ("/Users/moosch/Code/lua/" (25046 8805 884586 531000) "games/" "ray-tracer/" "cube/" ".DS_Store" "../" "./")
+
+ ("/Users/moosch/.emacs.d/init/" (25040 58454 691712 331000) "which-key.el" "early.el" "treemacs.el" "osx.el" "temp-files.el" "editorconfig.el" "paredit.el" "powerthesaurus.el" "undo-fu.el" "flymake-lua.el" "hover.el" "ivy-rich.el" "split-windows.el" "autocomplete.el" "company.el" "multiple-cursors.el" "lisp.el" "smart-tabs-mode.el" "dart.el" "flycheck.el" "eshell.el" "lua-block.el" "tramp.el" "../" "./")
+
+ ("/Users/moosch/Code/lua/ray-tracer/tests/" (25021 11531 346530 645000) "tools/" "../" "./")
+
+ ("/Users/" (24940 59998 0 0) "moosch/" "Shared/" ".localized" "../" "./")
+)
+
+;; ----- ido-unc-hosts-cache -----
+t

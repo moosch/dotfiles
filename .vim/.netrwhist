@@ -1,0 +1,12 @@
+let g:netrw_dirhistmax  =10
+let g:netrw_dirhistcnt =9
+let g:netrw_dirhist_9='/Users/moosch/Code/flutter/parallax/lib'
+let g:netrw_dirhist_8='/Users/moosch/Code/flutter/parallax'
+let g:netrw_dirhist_7='/Users/moosch/Code/c/c-sort'
+let g:netrw_dirhist_6='/Users/moosch/Aurelius/repos/aurelius-universe/db/service_db/tables'
+let g:netrw_dirhist_5='/Users/moosch/Aurelius/repos/aurelius-universe/db/service_db'
+let g:netrw_dirhist_4='/Users/moosch/Aurelius/repos/aurelius-universe/db'
+let g:netrw_dirhist_3='/Users/moosch/Aurelius/repos/aurelius-universe'
+let g:netrw_dirhist_2='/Users/moosch/Aurelius/repos/aurelius-universe/db/service_db/tables'
+let g:netrw_dirhist_1='/Users/moosch/Aurelius/repos/aurelius-universe/db/service_db'
+let g:netrw_dirhist_0='/Users/moosch/Aurelius/repos/aurelius-universe/db'
