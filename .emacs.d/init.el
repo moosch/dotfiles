@@ -1,6 +1,7 @@
 ;;------------------------------------------------
 ;; General commands
 ;;------------------------------------------------
+;;; Code:
 ;; To evaluate and load an expression use C-M-x
 
 
@@ -12,7 +13,7 @@
 ;;------------------------------------------------
 
 ;; Tell Emacs where to find some custom themes
-(add-to-list 'custom-theme-load-path "~/.emacs.d/themes")
+;;(add-to-list 'custom-theme-load-path "~/.emacs.d/themes")
 
 (load-theme 'wombat t)
 ;;(load-theme 'wheatgrass t)
@@ -142,6 +143,15 @@
  '(whitespace-tab ((t (:foreground "gray9"))))
  '(whitespace-trailing ((t nil))))
 
+;; Custom stuff from HandmadeHero Stream
+(defun post-load-stuff ()
+  (interactive)
+  ;(maximum-frame)
+  (set-background-color "#161616")
+  ;(set-foreground-color "burlywood")
+  (set-cursor-color "#39ccc5"))
+
+(add-hook 'window-setup-hook 'post-load-stuff t)
 
 ;; Don't bother with auto save and backups.
 ;; (setq auto-save-default nil)
@@ -173,6 +183,20 @@
 (require 'ido)
 (setq ido-ignore-buffers '("^\*Messages\*"))
 
+;;------------------------------------------------
+;; Tree Sitter
+;;------------------------------------------------
+(add-to-list 'load-path "~/.emacs.d/elisp-tree-sitter/core")
+(add-to-list 'load-path "~/.emacs.d/elisp-tree-sitter/lisp")
+(add-to-list 'load-path "~/.emacs.d/elisp-tree-sitter/langs")
+(require 'tree-sitter)
+(require 'tree-sitter-hl)
+(require 'tree-sitter-langs)
+(require 'tree-sitter-debug)
+(require 'tree-sitter-query)
+
+(global-tree-sitter-mode)
+
 
 
 ;;------------------------------------------------
@@ -182,6 +206,7 @@
   :diminish
   :bind (
          ("C-s" . swiper)
+         ("s-f" . swiper-isearch)
          ("M-x" . counsel-M-x)
          :map ivy-minibuffer-map
          ("TAB" . ivy-alt-done)
@@ -229,9 +254,24 @@
 ;;------------------------------------------------
 ;; Smex
 ;;------------------------------------------------
-(use-package smex ;; Adds M-x recent command sorting for counsel-M-x
-  :defer 1
-  :after counsel)
+;(use-package smex ;; Adds M-x recent command sorting for counsel-M-x
+;  :defer 1
+;  :after counsel)
+
+;;------------------------------------------------
+;; AMX - newer version of smex
+;;------------------------------------------------
+(use-package amx
+	     :ensure t
+	     :after ivy
+	     :custom
+	     (amx-backend 'auto)
+	     (amx-save-file "~/.emacs.d/amx-items")
+	     (amx-history-length 100)
+	     (amx-show-key-bindings nil)
+	     :config
+	     (amx-mode 1))
+
 
 ;;------------------------------------------------
 ;; Council
@@ -239,7 +279,9 @@
 (use-package counsel
   :bind (("M-x" . counsel-M-x)
          ("C-x b" . counsel-ibuffer)
-         ("C-x C-f" . counsel-find-file) ;;TODO Update to Cmd
+         ;("C-x C-f" . counsel-find-file)
+         ;("s-x s-f" . counsel-find-file)
+	 ("s-o" . counsel-find-file)
          :map minibuffer-local-map
          ("C-r" . 'counsel-minibuffer-history))
   :config (setq ivy-initial-inputs-alist nil)) ;; Don't start searches with ^
@@ -341,6 +383,25 @@
 (global-set-key (kbd "s-<up>") 'beginning-of-buffer)  ;; First line
 (global-set-key (kbd "s-<down>") 'end-of-buffer)      ;; Last line
 
+;; Copy & Paste
+(global-set-key (kbd "s-c") (kbd "M-w")) ;; Copy
+(global-set-key (kbd "s-x") (kbd "C-w")) ;; Cut
+(global-set-key (kbd "s-v") (kbd "C-y")) ;; Paste
+
+;; Close buffer
+(global-set-key (kbd "s-w") (kbd "C-x C-k"))
+(global-set-key (kbd "s-k") (kbd "C-x C-k"))
+
+;; Save buffer
+(global-set-key (kbd "s-s") (kbd "C-x C-s"))
+
+;; Find file
+(global-set-key (kbd "M-o") 'counsel-find-file)
+
+;; Find in directory
+(global-set-key (kbd "s-F") 'grep-find)
+
+
 ;; Copy current line to next line and move cursor down
 (defun my-duplicate-line-down(comment-first)
     "Duplicate the current line."
@@ -386,12 +447,10 @@
 ;; http://emacsredux.com/blog/2013/]05/22/smarter-navigation-to-the-beginning-of-a-line/
 (defun smarter-move-beginning-of-line (arg)
   "Move point back to indentation of beginning of line.
-
 Move point to the first non-whitespace character on this line.
 If point is already there, move to the beginning of the line.
 Effectively toggle between the first non-whitespace character and
 the beginning of the line.
-
 If ARG is not nil or 1, move forward ARG - 1 lines first.  If
 point reaches the beginning or end of the buffer, stop there."
   (interactive "^p")
@@ -468,7 +527,8 @@ point reaches the beginning or end of the buffer, stop there."
 
 
 ;;------------------------------------------------
-;; Company - complete anything
+;; Company - complete anything.
+;; The popup window when typing
 ;;------------------------------------------------
 (use-package company
   :config
@@ -484,20 +544,48 @@ point reaches the beginning or end of the buffer, stop there."
 ;; Multiple Cursors
 ;;------------------------------------------------
 ;; Multiple cursors. Similar to Sublime or VS Code.
-(use-package multiple-cursors
-  :config
-  (setq mc/always-run-for-all 1)
-  (global-set-key (kbd "s-M-<up>") 'mc/mark-previous-line)
-  (global-set-key (kbd "s-M-<down>") 'mc/mark-next-line)
-  (global-set-key (kbd "s-d") 'mc/mark-next-like-this)        ;; Cmd+d select next occurrence of region
-  (global-set-key (kbd "s-D") 'mc/mark-all-dwim)              ;; Cmd+Shift+d select all occurrences
-  ;; (global-set-key (kbd "M-s-d") 'mc/edit-beginnings-of-lines) ;; Alt+Cmd+d add cursor to each line in   region
-  (define-key mc/keymap (kbd "<return>") nil))
+(use-package multiple-cursors)
+;; (use-package multiple-cursors
+;;   :config
+;;   (setq mc/always-run-for-all 1)
+;;   (global-set-key (kbd "s-M-<up>") 'mc/mark-previous-lines)
+;;   (global-set-key (kbd "s-M-<down>") 'mc/mark-next-lines)
+;;   (global-set-key (kbd "s-d") 'mc/mark-next-like-this)        ;; Cmd+d select next occurrence of region
+;;   (global-set-key (kbd "s-D") 'mc/mark-all-dwim)              ;; Cmd+Shift+d select all occurrences
+;;   ;; (global-set-key (kbd "M-s-d") 'mc/edit-beginnings-of-lines) ;; Alt+Cmd+d add cursor to each line in   region
+;;   (define-key mc/keymap (kbd "<return>") nil))
+
+(setq mc/always-run-for-all 1)
+(global-set-key (kbd "s-M-<up>") 'mc/mark-previous-lines)
+(global-set-key (kbd "s-M-<down>") 'mc/mark-next-lines)
+(global-set-key (kbd "s-l") 'mc/mark-next-like-this-word)
+(global-set-key (kbd "s-M-L") 'mc/mark-all-dwim)
+(global-set-key (kbd "M-d") 'mc/mark-next-word-like-this)
+
 
 ;; M-s-<up>
 ;; M-s-<down>
 
 
+;;------------------------------------------------
+;; ivy-posframe - central box popup for commands
+;;------------------------------------------------
+;(use-package ivy-posframe
+;	     :ensure t
+;	     :delight
+;	     :custom
+;	     (ivy-posframe-height-alist
+;	       '((swiper . 20)
+;		 (t . 10)))
+;	     (ivy-posframe-display-function-alist
+;	       '((complete-symbol . ivy-posframe-display-at-point)
+;		 (counsel-describe-function . nil) ; turn off for search types
+;		 (counsel-describe-variable . nil)
+;		 (swiper . nil) ; turn off for swiper search
+;		 (swiper-isearch . nil)
+;		 (t . ivy-posframe-display-at-frame-center)))
+;	     :config
+;	     (ivy-posframe-mode 1))
 
 
 
@@ -505,18 +593,44 @@ point reaches the beginning or end of the buffer, stop there."
 ;;------------------------------------------------
 ;; Making Emacs MacOSX friendly
 ;;------------------------------------------------
-(when is-osx
-  (setq mac-command-modifier 'meta)
-  (setenv "PATH" (concat "/opt/local/bin:/opt/local/sbin:" (getenv "PATH"))))
+;;(when is-osx
+;; (setq mac-command-modifier 'meta)
+;;  (setenv "PATH" (concat "/opt/local/bin:/opt/local/sbin:" (getenv "PATH"))))
 ;; Set Cmd to be "super"
-(setq mac-right-command-modifier 'super)
-(setq mac-command-modifier 'super)
+;;(setq mac-right-command-modifier 'super)
+;;(setq mac-command-modifier 'super)
 
 ;; Right Alt (option) can be used to enter symbols like em dashes '—' and euros '€' and stuff.
-(setq mac-right-option-modifier 'nil)
+;;(setq mac-right-option-modifier 'nil)
+
+
+;;------------------------------------------------
+;; Making Emacs Linux friendly
+;;------------------------------------------------
+;; Set Alt key as "super"
+(setq win32-lwindow-modifier 'super)
+;; Set Windows key as "Meta"
 
 
 
+;;------------------------------------------------
+;; Flycheck & Flymake
+;;------------------------------------------------
+(use-package flycheck
+	     :ensure t
+	     :init (global-flycheck-mode)
+       :config
+       (bind-key "M-n" 'flycheck-next-error flycheck-mode-map)
+       (bind-key "M-p" 'flycheck-previous-error flycheck-mode-map))
+(add-hook 'after-init-hook #'global-flycheck-mode)
+(add-hook 'c-mode-hook
+	  (lambda () (setq flycheck-gcc-include-path
+			   (list (expand-file-name "~/bin/glfw-3.3.8/include/")
+				       (expand-file-name "~/bin/vulkan/1.3.224.1/x86_64/include/")
+               (expand-file-name "~/bin/includes/glm-0.9.9.8/glm/")
+               (expand-file-name "~/bin/includes/cglm/include/")
+               (expand-file-name "~/bin/glad/")
+               (expand-file-name "/usr/include/")))))
 
 
 ;;------------------------------------------------
@@ -556,11 +670,11 @@ point reaches the beginning or end of the buffer, stop there."
 ;;------------------------------------------------
 ;; Flycheck
 ;;------------------------------------------------
-(use-package flycheck
-  :ensure t
-  :config
-  (bind-key "M-n" 'flycheck-next-error flycheck-mode-map)
-  (bind-key "M-p" 'flycheck-previous-error flycheck-mode-map))
+;(use-package flycheck
+;  :ensure t
+;  :config
+;  (bind-key "M-n" 'flycheck-next-error flycheck-mode-map)
+;  (bind-key "M-p" 'flycheck-previous-error flycheck-mode-map))
 
 
 
@@ -618,8 +732,10 @@ point reaches the beginning or end of the buffer, stop there."
   (company-minimum-prefix-length 1)
   (company-idle-delay 0.0))
 
+; The popup box
 (use-package company-box
   :hook (company-mode . company-box-mode))
+
 
 ;;------------------------------------------------
 ;; LSP - Modes
@@ -660,6 +776,36 @@ point reaches the beginning or end of the buffer, stop there."
 ;; (advice-add #'lua-calculate-indentation-block-modifier
 ;;             :around #'lua-at-most-one-indent)
 
+(setq c-basic-offset 2)
+
+
+
+;;------------------------------------------------
+;; GLSL Mode
+;;------------------------------------------------
+(autoload 'glsl-mode "glsl-mode" nil t)
+(add-to-list 'auto-mode-alist '("\\.vert\\'" . glsl-mode))
+(add-to-list 'auto-mode-alist '("\\.frag\\'" . glsl-mode))
+
+
+;;------------------------------------------------
+;; Blamer - git lens
+;;------------------------------------------------
+(use-package blamer
+  :ensure t
+  :bind (("s-i" . blamer-show-commit-info)
+         ("C-c i" . ("s-i" . blamer-show-posframe-commit-info)))
+  :defer 20
+  :custom
+  (blamer-idle-time 0.3)
+  (blamer-min-offset 70)
+  :custom-face
+  (blamer-face ((t :foreground "#7a88cf"
+                    :background nil
+                    :height 140
+                    :italic t)))
+  :config
+  (global-blamer-mode 1))
 
 
 ;;------------------------------------------------
@@ -670,7 +816,7 @@ point reaches the beginning or end of the buffer, stop there."
          user-emacs-directory)
         ((boundp 'user-init-directory)
          user-init-directory)
-        (t "~/.emacs.d/init/")))
+        (t "~/.emacs.d/config")))
 
 (defun load-user-file (file)
   (interactive "f")
@@ -680,7 +826,38 @@ point reaches the beginning or end of the buffer, stop there."
 
 ;;(load-user-file "init/early.el")
 
+;;(load-user-file "config/c.el")
 
+(load-user-file "igrep/igrep.el")
+(autoload 'igrep "igrep"
+  "*Run `grep` PROGRAM to match REGEX in FILES..." t)
+(autoload 'igrep-find "igrep"
+  "*Run `grep` via `find`..." t)
+(autoload 'igrep-visited-files "igrep"
+  "*Run `grep` ... on all visited files." t)
+(autoload 'dired-do-igrep "igrep"
+  "*Run `grep` on the marked (or next prefix ARG) files." t)
+(autoload 'dired-do-igrep-find "igrep"
+  "*Run `grep` via `find` on the marked (or next prefix ARG) directories." t)
+(autoload 'Buffer-menu-igrep "igrep"
+  "*Run `grep` on the files visited in buffers marked with '>'." t)
+(autoload 'igrep-insinuate "igrep"
+  "Define `grep' aliases for the corresponding `igrep' commands." t)
+
+(autoload 'egrep "igrep"
+  "*Run `egrep`..." t)
+(autoload 'fgrep "igrep"
+  "*Run `fgrep`..." t)
+(autoload 'agrep "igrep"
+  "*Run `agrep`..." t)
+(autoload 'grep-find "igrep"
+  "*Run `grep` via `find`..." t)
+(autoload 'egrep-find "igrep"
+  "*Run `egrep` via `find`..." t)
+(autoload 'fgrep-find "igrep"
+  "*Run `fgrep` via `find`..." t)
+(autoload 'agrep-find "igrep"
+  "*Run `agrep` via `find`..." t)
 
 
 
@@ -690,4 +867,5 @@ point reaches the beginning or end of the buffer, stop there."
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
-   '(lua-mode company-mode company magit projectile color-theme-sanityinc-tomorrow badger-theme spacemacs-theme hc-zenburn-theme zenburn-theme nord-theme gruvbox-theme helpful smex flx doom-modeline ivy-rich rainbow-delimiters command-log-mode yasnippet which-key visual-regexp use-package undo-fu treeview tree-mode sly slime shell-pop project-explorer pfuture neotree multiple-cursors move-text luarocks hydra flycheck exec-path-from-shell editorconfig dumb-jump dired-sidebar counsel cfrs auto-complete alchemist ace-window)))
+   '(blamer tree-sitter glsl-mode lua-mode company-mode company magit projectile color-theme-sanityinc-tomorrow badger-theme spacemacs-theme hc-zenburn-theme zenburn-theme nord-theme gruvbox-theme helpful smex flx doom-modeline ivy-rich rainbow-delimiters command-log-mode yasnippet which-key visual-regexp use-package undo-fu treeview tree-mode sly slime shell-pop project-explorer pfuture neotree multiple-cursors move-text luarocks hydra flycheck exec-path-from-shell editorconfig dumb-jump dired-sidebar counsel cfrs auto-complete alchemist ace-window))
+ '(safe-local-variable-values '((comment-fill-column . 80))))
