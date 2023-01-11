@@ -490,8 +490,9 @@ point reaches the beginning or end of the buffer, stop there."
 ;; Indentation setting for various languages.
 (setq tab-width 2)
 (setq standard-indent 2)
-(setq c-basic-offset 4)
+(setq c-basic-offset 2)
 (setq js-indent-level 2)
+(setq typescript-indent-level 2)
 (setq css-indent-offset 2)
 (setq lua-indent-level 2)
 ;; (setq lisp-indent-level 2)
@@ -789,26 +790,6 @@ point reaches the beginning or end of the buffer, stop there."
 
 
 ;;------------------------------------------------
-;; Blamer - git lens
-;;------------------------------------------------
-(use-package blamer
-  :ensure t
-  :bind (("s-i" . blamer-show-commit-info)
-         ("C-c i" . ("s-i" . blamer-show-posframe-commit-info)))
-  :defer 20
-  :custom
-  (blamer-idle-time 0.3)
-  (blamer-min-offset 70)
-  :custom-face
-  (blamer-face ((t :foreground "#7a88cf"
-                    :background nil
-                    :height 140
-                    :italic t)))
-  :config
-  (global-blamer-mode 1))
-
-
-;;------------------------------------------------
 ;; Load custom EmacsLisp files
 ;;------------------------------------------------
 (defconst user-init-dir
@@ -823,6 +804,8 @@ point reaches the beginning or end of the buffer, stop there."
   "Load a file in current user's configuration directory"
   (load-file (expand-file-name file user-init-dir)))
 
+
+(load-user-file "init/blamer.el")
 
 ;;(load-user-file "init/early.el")
 
