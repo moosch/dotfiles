@@ -1,0 +1,112 @@
+// Zed keymap
+//
+// For information on binding keys, see the Zed
+// documentation: https://zed.dev/docs/key-bindings
+//
+// To see the default key bindings run `zed: open default keymap`
+// from the command palette.
+[
+  {
+    "context": "Editor && vim_mode == normal && vim_operator == none && !VimWaiting",
+    "bindings": {
+      "space /": [
+        "editor::ToggleComments",
+        {
+          "advance_downwards": false
+        }
+      ],
+      "space c": "editor::ToggleFold"
+    }
+  },
+  {
+    "context": "Editor && vim_mode == normal && !VimWaiting",
+    "bindings": {
+      "shift+k": "editor::Hover",
+      "space p": "file_finder::Toggle",
+      "space l a": "editor::ToggleCodeActions",
+      "space l f": "editor::Format",
+      "space l r": "editor::Rename",
+      "space l l": "diagnostics::Deploy",
+      "space f": "file_finder::Toggle",
+      "space b": "tab_switcher::Toggle",
+      "space o": "outline::Toggle",
+      "space v": "editor::GoToDefinitionSplit",
+      "space w": "pane::CloseActiveItem",
+      "u": "editor::Undo",
+      "shift-u": "editor::Redo",
+      "g r": "editor::FindAllReferences",
+      "space f g": "pane::DeploySearch",
+      "space f f": "buffer_search::Deploy",
+      "space f r": "buffer_search::DeployReplace",
+      "space e": "workspace::ToggleLeftDock",
+      "space shift-e": "workspace::ToggleRightDock",
+      "space >": "pane::GoForward",
+      "space <": "pane::GoBack"
+    }
+  },
+  {
+    "context": "Editor && vim_mode == visual && !VimWaiting",
+    "bindings": {
+      "shift-up": "editor::MoveLineUp",
+      "shift-down": "editor::MoveLineDown"
+    }
+  },
+  {
+    "context": "Workspace",
+    "bindings": {
+      // "shift shift": "file_finder::Toggle"
+      "ctrl-cmd-left": "workspace::ActivatePaneLeft",
+      "ctrl-cmd-right": "workspace::ActivatePaneRight",
+      "ctrl-cmd-up": "workspace::ActivatePaneUp",
+      "ctrl-cmd-down": "workspace::ActivatePaneDown",
+      "cmd-k shift-left": "workspace::SwapPaneLeft",
+      "cmd-k shift-right": "workspace::SwapPaneRight",
+      "cmd-k shift-up": "workspace::SwapPaneUp",
+      "cmd-k shift-down": "workspace::SwapPaneDown"
+    }
+  },
+  {
+    "context": "Editor",
+    "bindings": {
+      // "j k": ["workspace::SendKeystrokes", "escape"]
+    }
+  },
+  {
+    "context": "Editor && !(ContextEditor > Editor) && edit_prediction && !showing_completions",
+    "bindings": {
+      "tab": "editor::Tab",
+      "alt-tab": "editor::AcceptEditPrediction",
+      "ctrl-enter": "editor::AcceptEditPrediction"
+    }
+  },
+  {
+    "context": "((Editor && vim_mode == normal) && !VimWaiting)",
+    "bindings": {
+      "space \\": "pane::SplitRight"
+    }
+  },
+  {
+    "context": "(vim_mode == helix_normal && !menu)",
+    "bindings": {
+      "space w s": null
+    }
+  },
+  {
+    "context": "((FileFinder || FileFinder > Picker > Editor) || FileFinder > Picker > menu)",
+    "bindings": {
+      "space -": "pane::SplitDown"
+    }
+  },
+  {
+    "context": "((FileFinder || FileFinder) > Picker > Editor || FileFinder) > Picker > menu",
+    "bindings": {
+      "ctrl-j": "pane::SplitDown"
+    }
+  },
+  {
+    "context": "((Editor && vim_mode == normal) && !VimWaiting)",
+    "bindings": {
+      "space -": "pane::SplitDown"
+    }
+  }
+]

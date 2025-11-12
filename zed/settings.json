@@ -1,0 +1,119 @@
+// Zed settings
+//
+// For information on how to configure Zed, see the Zed
+// documentation: https://zed.dev/docs/configuring-zed
+//
+// To see all of Zed's default settings without changing your
+// custom settings, run the `zed: Open Default Settings` command
+// from the command palette
+{
+  "project_panel": {
+    "dock": "right"
+  },
+  "icon_theme": {
+    "mode": "system",
+    "light": "Zed (Default)",
+    "dark": "Zed (Default)"
+  },
+  "edit_predictions": {
+    "mode": "subtle",
+    "copilot": {
+      "proxy": null,
+      "proxy_no_verify": null
+    },
+    "enabled_in_text_threads": false
+  },
+  "agent": {
+    "inline_assistant_model": {
+      "provider": "copilot_chat",
+      "model": "gemini-2.0-flash-001"
+    },
+    "model_parameters": [],
+    "default_model": {
+      "provider": "zed.dev",
+      "model": "claude-sonnet-4"
+    }
+  },
+  "features": {
+    // "edit_prediction_provider": "zed"
+    "edit_prediction_provider": "zed"
+  },
+  "show_completions_on_input": true,
+  "completions": {
+    "lsp_insert_mode": "replace"
+  },
+  "tab_bar": {
+    "show": false
+  },
+  "restore_on_startup": "last_session",
+  "vim_mode": true,
+  "ui_font_size": 14,
+  "buffer_font_size": 14,
+  "theme": {
+    "mode": "system",
+    "light": "Gruber Moosch Darker Theme",
+    "dark": "Gruber Moosch Darker Theme"
+  },
+  "buffer_font_family": "Iosevka Fixed Slab",
+  "base_keymap": "VSCode",
+  "relative_line_numbers": true,
+  "cursor_blink": false,
+  "current_line_highlight": "line",
+  "hover_popover_enabled": false,
+  "scrollbar": {
+    "show": "never"
+  },
+  "terminal": {
+    "font_family": "Iosevka Term",
+    "font_size": 14,
+    "line_height": "comfortable"
+  },
+  "languages": {
+    "C": {
+      "format_on_save": "off",
+      "tab_size": 4
+    },
+    "Python": {
+      "tab_size": 4,
+      "formatter": "language_server",
+      "format_on_save": "on"
+    },
+    "JavaScript": {
+      "tab_size": 2,
+      "formatter": {
+        "external": {
+          "command": "prettier",
+          "arguments": ["--stdin-filepath", "{buffer_path}"]
+        }
+      }
+    }
+  },
+  "lsp": {
+    "gopls": {
+      "initialization_options": {
+        "gofumpt": true,
+        "usePlaceholders": true,
+        "staticcheck": true,
+        "codelenses": {
+          "gc_details": true,
+          "generate": true,
+          "regenerate_cgo": true,
+          "tidy": true,
+          "upgrade_dependency": true,
+          "vendor": true
+        },
+        "hints": {
+          "assignVariableTypes": true,
+          "compositeLiteralFields": true,
+          "compositeLiteralTypes": true,
+          "constantValues": true,
+          "functionTypeParameters": true,
+          "parameterName": true,
+          "rangeVariableTypes": true
+        }
+      }
+    }
+  },
+  "preferred_line_length": 180,
+  "soft_wrap": "editor_width"
+}
