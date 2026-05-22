@@ -1,814 +1,343 @@
-;;------------------------------------------------
-;; General commands
-;;------------------------------------------------
-;;; Code:
-;; To evaluate and load an expression use C-M-x
-
-
-;; C-h o     describe-symbol
-;; C-Mx i    completion-at-point
-
-
-
-;;------------------------------------------------
-;; Packages
-;;------------------------------------------------
-;; Initialize package sources
-(require 'package)
-
-(setq package-archives '(("melpa" . "https://melpa.org/packages/")
-                         ("melpa-stable" . "https://stable.melpa.org/packages/")
-                         ("gnu" . "https://elpa.gnu.org/packages/")
-                         ("org" . "https://orgmode.org/elpa/")
-                         ("elpa" . "https://elpa.gnu.org/packages/")
-                         ("nognu" . "https://elpa.nongnu.org/nongnu/")))
-
-(package-initialize)
-
-(unless package-archive-contents
-  (package-refresh-contents))
-
-;; Initialize use-package on non-linux platforms
-(unless (package-installed-p 'use-package)
-  (package-refresh-contents)
-  (package-install 'use-package))
-
-(require 'use-package)
-(setq use-package-always-ensure t)
-
-(use-package command-log-mode)
-
-
-
-
-
-
-;;------------------------------------------------
-;; Theming
-;;------------------------------------------------
-(use-package doom-themes
-  :ensure t
-  :config
-  (load-theme 'doom-one t))
-;;  (load-theme 'doom-acario-dark))
-
-;; Tell Emacs where to find some custom themes
-;;(add-to-list 'custom-theme-load-path "~/.emacs.d/themes")
-
-;; (load-theme 'wombat t)
-;;(load-theme 'wheatgrass t)
-;;(load-theme 'nord t)
-;;(load-theme 'zenburn t)
-;;(load-theme 'hc-zenburn t)
-;;(load-theme 'modus-vivendi t)
-;;(load-theme 'gruvbox t)
-;;(load-theme 'spacemacs-dark t)
-;;(load-theme 'badger t)
-
-;; (set-face-attribute 'default nil :font "Fira Code Retina" :height 130)
-
-
-;; Customizations
-;; (set-face-background 'default "#222")
-;; (set-face-background 'cursor "#c96")
-;; (set-face-background 'isearch "#c60")
-;; (set-face-foreground 'isearch "#eee")
-;; (set-face-background 'lazy-highlight "#960")
-;; (set-face-foreground 'lazy-highlight "#ccc")
-;; (set-face-foreground 'font-lock-comment-face "#fc0")
-;; (set-face-attribute 'region nil :background "#0c947f" :foreground "#ffffff")
-
-
-
-
-
-;;------------------------------------------------
-;; MacOSX Friendly
-;;------------------------------------------------
-(defvar is-osx (string-equal "darwin" (symbol-name system-type)))
-
-;; Make ESC quit prompts
-;;(global-set-key (kbd "<escape>") 'keyboard-escape-quit)
-;; Use ESC as universal get me out of here command
-(define-key key-translation-map (kbd "ESC") (kbd "C-g"))
-
-;; Things you'd expect from macOS app.
-(global-set-key (kbd "s-s") 'save-buffer)             ;; save
-(global-set-key (kbd "s-S") 'write-file)              ;; save as
-(global-set-key (kbd "s-q") 'save-buffers-kill-emacs) ;; quit
-(global-set-key (kbd "s-a") 'mark-whole-buffer)       ;; select all
-
-
-;;------------------------------------------------
-;; Making Emacs Linux friendly
-;;------------------------------------------------
-;; Set Alt key as "super"
-(setq win32-lwindow-modifier 'super)
-
-
-
-
-
-
-;;------------------------------------------------
-;; General startup stuff
-;;------------------------------------------------
-;; Don't show splash screen on startup
-;; Flash when the bell rings
-(setq inhibit-startup-message t)
-(tool-bar-mode -1)
-(menu-bar-mode -1)
-(setq echo-keystrokes 0.1)
-(setq echo-keystrokes 0.1)
-(add-hook 'prog-mode-hook 'display-line-numbers-mode)
-(setq cursor-in-non-selected-windows t)
-(setq sentence-end-double-space nil)
-(setq confirm-kill-emacs 'y-or-n-p)
-(setq help-window-select t)
-(setq visible-bell -1)
-
-;; Different backup directory
-(setq backup-directory-alist '(("." . "~/.saves")))
-
-(show-paren-mode 1)
-
-;; Delete selection on type to replace
-(delete-selection-mode 1)
-
-(fset 'yes-or-no-p 'y-or-n-p)      ; y and n instead of yes and no everywhere else
-(delete-selection-mode 1)          ; Delete selected text when typing
-(global-unset-key (kbd "s-p"))     ; Don't print
-
-
-
-
-
-
-
-
-;;------------------------------------------------
-;; Which Key
-;;------------------------------------------------
-;; C-h brings up minibuffer of commands
-(use-package which-key
-  :init (which-key-mode)
-  :diminish which-key-mode
-  :config (setq which-key-idle-delay 0.1))
-
-
-
-
-
-;;------------------------------------------------
-;; Highlight line
-;;------------------------------------------------
-(global-hl-line-mode +1)
-
-
-
-
-
-;;------------------------------------------------
-;; Modeline
-;;------------------------------------------------
-(use-package doom-modeline
-  :ensure t
-  :hook (after-init . doom-modeline-mode))
-
-
-
-
-
-;;------------------------------------------------
-;; Icons and Fonts
-;;------------------------------------------------
-;; Need to run M+x all-the-icons-install-fonts
-(use-package all-the-icons
-  :ensure t)
-
-
-
-
-
-
-
-;;------------------------------------------------
-;; IDO
-;;------------------------------------------------
-;; (setq ido-everywhere t)
-;; C-x b to search buffer list
-;; (setq ido-enable-flex-matching t)
-(ido-mode t)
-
-
-
-
-
-
-
-;;------------------------------------------------
-;; Projectile
-;;------------------------------------------------
-(use-package projectile
-  :ensure t
-  :config
-  (define-key projectile-mode-map (kbd "C-x p") 'projectile-command-map)
-  (projectile-mode +1))
-
-
-
-
-
-
-
-
-;------------------------------------------------
-;; Dashboard
-;;------------------------------------------------
-(use-package dashboard
-  :ensure t
-  :init
-  (progn
-    (setq dashboard-items '((recents . 10)
-			    (projects . 5)))
-    (setq dashboard-show-shortcuts nil)
-    (setq dashboard-center-content nil)
-    (setq dashboard-banner-logo-title "Code to hell")
-    (setq dashboard-set-file-icons t)
-    (setq dashboard-set-heading-icons t)
-    ;(setq dashboard-startup-banner "~/.emacs/gnu.png")
-    )
-  :config
-  (dashboard-setup-startup-hook))
-
-
-
-
-
-
-
-;;------------------------------------------------
-;; Tide
-;;------------------------------------------------
-(use-package tide
-  :ensure t
-  :after (typescript-mode company flycheck)
-  :hook ((typescript-mode . tide-setup)
-         (typescript-mode . tide-hl-identifier-mode)
-         (before-save . tide-format-before-save)))
-
-
-
-
-
-
-;;------------------------------------------------
-;; Ivy
-;;------------------------------------------------
-(use-package ivy
-  :diminish
-  :bind (
-	 ("C-s" . swiper)
-	 ("s-f" . swiper-isearch)
-	 ("M-x" . counsel-M-x)
-	 :map ivy-minibuffer-map
-	 ("TAB" . ivy-alt-done)
-	 ;("C-l" . ivy-alt-done)
-         ;("C-j" . ivy-next-line)
-         ;("C-k" . ivy-previous-line)
-         :map ivy-switch-buffer-map
-         ;("C-k" . ivy-previous-line)
-         ;("C-l" . ivy-done)
-         ;("C-d" . ivy-switch-buffer-kill)
-         :map ivy-reverse-i-search-map
-         ;("C-k" . ivy-previous-line)
-					;("C-d" . ivy-reverse-i-search-kill)
-	 )
-  :config
-  (ivy-rich-mode 1))
-
-;(use-package ivy-rich
-;  :init
-;  (ivy-rich-mode 1))
-
-;; Set minibuffer colors to distinguish between active and inactive windows
-(set-face-attribute 'mode-line nil :background "#4682c2")
-(set-face-attribute 'mode-line-inactive nil :background "#444")
-
-
-
-
-
-
-;;------------------------------------------------
-;; Flx
-;;------------------------------------------------
-(use-package flx ;; Improves sorting of fuzzy-matched results
-  :defer t
-  :init (setq ivy-flx-limit 10000))
-
-
-
-
-
-
-;;------------------------------------------------
-;; Council
-;;------------------------------------------------
-(use-package counsel
-  :bind (("M-x" . counsel-M-x)
-         ("C-x b" . counsel-ibuffer)
-         ;("C-x C-f" . counsel-find-file)
-         ;("s-x s-f" . counsel-find-file)
-	 ("s-o" . counsel-find-file)
-         :map minibuffer-local-map
-         ("C-r" . 'counsel-minibuffer-history))
-  :config (setq ivy-initial-inputs-alist nil)) ;; Don't start searches with ^
-
-
-
-
-
-
-
-;;------------------------------------------------
-;; Rainbow Delimiters
-;;------------------------------------------------
-(use-package rainbow-delimiters
-  :hook (prog-mode . rainbow-delimiters-mode)) ; prog-mode is the base mode for all programming languages
-
-
-
-
-;;------------------------------------------------
-;; Windmove
-;;------------------------------------------------
-;; Go to other windows easily with one keystroke Cmd-something.
-(global-set-key (kbd "s-1") (kbd "C-x 1"))  ;; Cmd-1 kill other windows (keep 1)
-(global-set-key (kbd "s-2") (kbd "C-x 2"))  ;; Cmd-2 split horizontally
-(global-set-key (kbd "s-3") (kbd "C-x 3"))  ;; Cmd-3 split vertically
-(global-set-key (kbd "s-0") (kbd "C-x 0"))  ;; Cmd-0...
-(global-set-key (kbd "s-w") (kbd "C-x 0"))  ;; ...and Cmd-w to close current window
-
-;; Move between windows with Control-Command-Arrow and with =Cmd= just like in iTerm.
-(use-package windmove
-  :config
-  ; (global-set-key (kbd "<C-s-left>")  'windmove-left)  ;; Ctrl+Cmd+left go to left window
-  (global-set-key (kbd "s-[")  'windmove-left)         ;; Cmd+[ go to left window
-
-  ; (global-set-key (kbd "<C-s-right>") 'windmove-right) ;; Ctrl+Cmd+right go to right window
-  (global-set-key (kbd "s-]")  'windmove-right)        ;; Cmd+] go to right window
-
-  ; (global-set-key (kbd "<C-s-up>")    'windmove-up)    ;; Ctrl+Cmd+up go to upper window
-  (global-set-key (kbd "s-{")  'windmove-up)           ;; Cmd+Shift+[ go to upper window
-
-  ; (global-set-key (kbd "<C-s-down>")  'windmove-down)  ;; Ctrl+Cmd+down go to down window
-  (global-set-key (kbd "s-}")  'windmove-down))        ;; Cmd+Shift+] got to down window
-
-
-;; Enable winner mode to quickly restore window configurations
-(winner-mode 1)
-(global-set-key (kbd "M-s-[") 'winner-undo)
-(global-set-key (kbd "M-s-]") 'winner-redo)
-
-
-
-
-
-
-
-;;------------------------------------------------
-;; Centaur Tabs
-;;------------------------------------------------
-(use-package centaur-tabs
-  :ensure t
-  :config
-  (setq centaur-tabs-set-bar 'under
-	centaur-tabs-set-icons t
-	centaur-tabs-gray-out-icons 'buffer
-	centaur-tabs-height 24
-	centaur-tabs-set-modified-marker t
-	centaur-tabs-modified-marker "*")
-  (centaur-tabs-mode t))
-;; Switch tabs C-super-<right> ? centaur-tabs-forwatd
-(global-set-key (kbd "M-s-<right>") 'centaur-tabs-forward-tab)
-(global-set-key (kbd "M-s-<left>") 'centaur-tabs-backward-tab)
-
-
-
-
-
-
-
-
-
-;;------------------------------------------------
-;; Company - complete anything
-;;------------------------------------------------
-(use-package company
-  :ensure t
-  :init
-  :config
-  (setq company-idle-delay 0.1
-	company-global-modes '(not org-mode)
-	company-minimum-prefix-length 2
-	company-selection-wrap-around t
-	company-global-modes '(not erc-mode message-mode eshell-mode shell-mode))
-  (add-hook 'after-init-hook 'global-company-mode))
-
-
-
-
-
-;;------------------------------------------------
-;; Flycheck
-;;------------------------------------------------
-(use-package flycheck
-  :ensure t
-  :init (global-flycheck-mode)
-  :config
-  (bind-key "M-n" 'flycheck-next-error flycheck-mode-map)
-  (bind-key "M-p" 'flycheck-previous-error flycheck-mode-map))
-
-(add-hook 'after-init-hook #'global-flycheck-mode)
-(add-hook 'c-mode-hook
-	  (lambda () (setq flycheck-gcc-include-path
-			   (list (expand-file-name "~/bin/glfw-3.3.8/include/")
-				 (expand-file-name "~/bin/vulkan/1.3.224.1/x86_64/include/")
-				 (expand-file-name "~/bin/includes/glm-0.9.9.8/glm/")
-				 (expand-file-name "~/bin/includes/cglm/include/")
-				 (expand-file-name "~/bin/glad/")
-				 (expand-file-name "/usr/include/")))))
-
-
-
-
-
-
-
-
-
-
-;;------------------------------------------------
-;; Multiple Cursors
-;;------------------------------------------------
-;; Multiple cursors. Similar to Sublime or VS Code.
-(use-package multiple-cursors)
-;; (use-package multiple-cursors
-;;   :config
-;;   (setq mc/always-run-for-all 1)
-;;   (global-set-key (kbd "s-M-<up>") 'mc/mark-previous-lines)
-;;   (global-set-key (kbd "s-M-<down>") 'mc/mark-next-lines)
-;;   (global-set-key (kbd "s-d") 'mc/mark-next-like-this)        ;; Cmd+d select next occurrence of region
-;;   (global-set-key (kbd "s-D") 'mc/mark-all-dwim)              ;; Cmd+Shift+d select all occurrences
-;;   ;; (global-set-key (kbd "M-s-d") 'mc/edit-beginnings-of-lines) ;; Alt+Cmd+d add cursor to each line in   region
-;;   (define-key mc/keymap (kbd "<return>") nil))
-
-(setq mc/always-run-for-all 1)
-(global-set-key (kbd "s-M-<up>") 'mc/mark-previous-lines)
-(global-set-key (kbd "s-M-<down>") 'mc/mark-next-lines)
-(global-set-key (kbd "s-l") 'mc/mark-next-like-this-word)
-(global-set-key (kbd "s-M-L") 'mc/mark-all-dwim)
-(global-set-key (kbd "M-d") 'mc/mark-next-word-like-this)
-
-
-
-
-
-
-
-;;------------------------------------------------
-;; Use my bash env
-;;------------------------------------------------
-(use-package exec-path-from-shell
-  :ensure t
-  :config
-  (exec-path-from-shell-initialize))
-
-
-
-
-
-
-
-
-;;------------------------------------------------
-;; JSON
-;;------------------------------------------------
-(use-package json-mode
-  :ensure t)
-
-
-
-
-
-
-
-;;------------------------------------------------
-;; MaGit
-;;------------------------------------------------
-(use-package magit
-  :ensure t
-  :bind (
-	 ("C-x g" . magit-status)))
-
-
-
-
-
-
-
-;;------------------------------------------------
-;; LSP Modes
-;;------------------------------------------------
-(setq lsp-log-io nil) ;; Don't log everything = speed
-(setq lsp-keymap-prefix "C-c l")
-(setq lsp-restart 'auto-restart)
-(setq lsp-ui-sideline-show-diagnostics t)
-(setq lsp-ui-sideline-show-hover t)
-(setq lsp-ui-sideline-show-code-actions t)
-
-(use-package lsp-mode
-  :ensure t
-  :hook (
-	 (web-mode . lsp-deferred)
-	 (lsp-mode . lsp-enable-which-key-integration)
-	 )
-  :commands lsp-deferred)
-
-(use-package lsp-ui
-  :ensure t
-  :commands lsp-ui-mode)
-
-
-
-
-
-
-(defun enable-minor-mode (my-pair)
-  "Enable minor mode if filename match the regexp.  MY-PAIR is a cons cell (regexp . minor-mode)."
-  (if (buffer-file-name)
-      (if (string-match (car my-pair) buffer-file-name)
-	  (funcall (cdr my-pair)))))
-
-
-
-
-
-
-;;------------------------------------------------
-;; PrettierJS
-;;------------------------------------------------
-(use-package prettier-js
-  :ensure t)
-(add-hook 'web-mode-hook #'(lambda ()
-                             (enable-minor-mode
-                              '("\\.jsx?\\'" . prettier-js-mode))
-			     (enable-minor-mode
-                              '("\\.tsx?\\'" . prettier-js-mode))))
-
-
-
-
-
-
-;;------------------------------------------------
-;; C Mode
-;;------------------------------------------------
-(setq c-default-style "bsd")
-
-
-
-
-
-
-
-;;------------------------------------------------
-;; Web Mode
-;;------------------------------------------------
-(setq web-mode-markup-indent-offset 2)
-(setq web-mode-code-indent-offset 2)
-(setq web-mode-css-indent-offset 2)
-(use-package web-mode
-  :ensure t
-  :mode (("\\.js\\'" . web-mode)
-	 ("\\.jsx\\'" .  web-mode)
-	 ("\\.ts\\'" . web-mode)
-	 ("\\.tsx\\'" . web-mode)
-	 ("\\.html\\'" . web-mode))
-  :commands web-mode)
-
-
-
-
-
-
-;;------------------------------------------------
-;; Editing
-;;------------------------------------------------
-
-;; Delete trailing spaces and add new line in the end of a file on save.
-(add-hook 'before-save-hook 'delete-trailing-whitespace)
-(setq require-final-newline t)
-
-;; Linear undo and redo.
-(use-package undo-fu)
-(global-set-key (kbd "s-z") 'undo-fu-only-undo)
-(global-set-key (kbd "s-Z") 'undo-fu-only-redo)
-
-
-;; Move-text lines around with meta-up/down.
-(use-package move-text
-  :config
-  (move-text-default-bindings))
-
-
-;; Comment line or region.
-(global-set-key (kbd "s-/") 'comment-line)
-
-;; Visually find and replace text
-(use-package visual-regexp
-  :config
-  (define-key global-map (kbd "M-s-f") 'vr/replace)
-  (define-key global-map (kbd "s-r") 'vr/replace))  ;; Cmd+r find and replace
-
-;(global-set-key (kbd "C-a") 'smarter-move-beginning-of-line)
-;(global-set-key (kbd "s-<left>") 'smarter-move-beginning-of-line)
-
-;; Kill line with CMD-Backspace. Note that thanks to Simpleclip, killing doesn't rewrite the system clipboard.
-;; Kill one word with Alt+Backspace.
-;; Kill forward word with Alt-Shift-Backspace.
-(global-set-key (kbd "s-<backspace>") 'kill-whole-line)
-(global-set-key (kbd "M-S-<backspace>") 'kill-word)
-
-;; Use Cmd for movement and selection.
-(global-set-key (kbd "s-<right>") (kbd "C-e"))        ;; End of line
-(global-set-key (kbd "S-s-<right>") (kbd "C-S-e"))    ;; Select to end of line
-(global-set-key (kbd "s-<left>") (kbd "M-m"))         ;; Beginning of line (first non-whitespace character)
-(global-set-key (kbd "S-s-<left>") (kbd "M-S-m"))     ;; Select to beginning of line
-
-(global-set-key (kbd "s-<up>") 'beginning-of-buffer)  ;; First line
-(global-set-key (kbd "s-<down>") 'end-of-buffer)      ;; Last line
-
-;; Copy & Paste
-(global-set-key (kbd "s-c") (kbd "M-w")) ;; Copy
-(global-set-key (kbd "s-x") (kbd "C-w")) ;; Cut
-(global-set-key (kbd "s-v") (kbd "C-y")) ;; Paste
-
-;; Close buffer
-(global-set-key (kbd "s-w") (kbd "C-x C-k"))
-(global-set-key (kbd "s-k") (kbd "C-x C-k"))
-
-;; Save buffer
-(global-set-key (kbd "s-s") (kbd "C-x C-s"))
-
-;; Find file
-(global-set-key (kbd "M-o") 'counsel-find-file)
-
-;; Find in directory
-(global-set-key (kbd "s-F") 'grep-find)
-
-
-;; Copy current line to next line and move cursor down
-(defun my-duplicate-line-down(comment-first)
-    "Duplicate the current line."
-    (interactive "P")
-    (let ((line-text (buffer-substring-no-properties
-                      (line-beginning-position)
-                      (line-end-position))))
-      (save-excursion
-        (if comment-first
-            (progn
-              (comment-line 1)
-              (move-beginning-of-line 1)
-              (open-line 1))
-          (move-end-of-line 1)
-          (open-line 1)
-          (forward-char))
-        (insert line-text))
-      (next-line)))
-
-;; Copy current line to previous line and move cursor up
-(defun my-duplicate-line-up(comment-first)
-    "Duplicate the current line."
-    (interactive "P")
-    (let ((line-text (buffer-substring-no-properties
-                      (line-beginning-position)
-                      (line-end-position))))
-      (save-excursion
-        (if comment-first
-            (progn
-              (comment-line 1)
-              (move-beginning-of-line 1)
-              (open-line 1))
-          (move-end-of-line 1)
-          (open-line 1)
-          (forward-char))
-        (insert line-text))))
-
-(global-set-key (kbd "M-S-<down>") 'my-duplicate-line-down)
-(global-set-key (kbd "M-S-<up>") 'my-duplicate-line-up)
-
-
-;; Thanks to Bozhidar Batsov
-;; http://emacsredux.com/blog/2013/]05/22/smarter-navigation-to-the-beginning-of-a-line/
-(defun smarter-move-beginning-of-line (arg)
-  "Move point back to indentation of beginning of line.
-Move point to the first non-whitespace character on this line.
-If point is already there, move to the beginning of the line.
-Effectively toggle between the first non-whitespace character and
-the beginning of the line.
-If ARG is not nil or 1, move forward ARG - 1 lines first.  If
-point reaches the beginning or end of the buffer, stop there."
-  (interactive "^p")
-  (setq arg (or arg 1))
-  ;; Move lines first
-  (when (/= arg 1)
-    (let ((line-move-visual nil))
-      (forward-line (1- arg))))
-
-  (let ((orig-point (point)))
-    (back-to-indentation)
-    (when (= orig-point (point))
-      (move-beginning-of-line 1))))
-
-
-;; Always wrap lines
-(global-visual-line-mode 1)
-
-
-;; Show stray whitespace.
-(setq-default show-trailing-whitespace 1)
-(setq-default indicate-empty-lines t)
-(setq-default indicate-buffer-boundaries 'left)
-
-;; Consider a period followed by a single space to be end of sentence.
-(setq sentence-end-double-space nil)
-
-;; Use spaces, not tabs, for indentation.
-(setq-default indent-tabs-mode nil)
-
-;; Display the distance between two tab stops as 2 characters wide.
+;; Bootstrap straight.el
+(defvar bootstrap-version)
+(let ((bootstrap-file
+       (expand-file-name
+        "straight/repos/straight.el/bootstrap.el"
+        user-emacs-directory))
+      (bootstrap-version 7))
+  (unless (file-exists-p bootstrap-file)
+    (with-current-buffer
+        (url-retrieve-synchronously
+         "https://raw.githubusercontent.com/radian-software/straight.el/develop/install.el"
+         'silent 'inhibit-cookies)
+      (goto-char (point-max))
+      (eval-print-last-sexp)))
+  (load bootstrap-file nil 'nomessage))
+
+;; Integrate use-package with straight
+(straight-use-package 'use-package)
+(setq straight-use-package-by-default t)
+
+;; Redirect backup and auto-save files to /tmp instead of cluttering working dirs
+(make-directory "/tmp/emacs-backups" t)
+(make-directory "/tmp/emacs-autosaves" t)
+(setq backup-directory-alist `(("." . "/tmp/emacs-backups")))
+(setq auto-save-file-name-transforms `((".*" "/tmp/emacs-autosaves/" t)))
+(setq create-lockfiles nil)
+
+;; Auto-revert buffers when files change on disk
+(global-auto-revert-mode 1)
+(setq auto-revert-use-notify nil)
+
+;; Show relative path to working dir in modeline
+(defun my/modeline-buffer-path ()
+  (if-let* ((file (buffer-file-name))
+            (root (or (project-root (project-current)) default-directory))
+            (rel  (file-relative-name file root)))
+      rel
+    (buffer-name)))
+
+(setq-default mode-line-buffer-identification
+              '(:eval (propertize (my/modeline-buffer-path)
+                                  'face 'mode-line-buffer-id)))
+
+;; Scrolling
+(pixel-scroll-precision-mode 1)  ; smooth trackpad/wheel scrolling in GUI
+(xterm-mouse-mode 1)              ; mouse support in terminal
+
+;; Hide line-wrap continuation indicators
+(set-display-table-slot standard-display-table 'wrap ?\s)
+(setq fringe-indicator-alist
+      (assq-delete-all 'continuation fringe-indicator-alist))
+(global-set-key (kbd "M-<up>")   #'scroll-down-line)
+(global-set-key (kbd "M-<down>") #'scroll-up-line)
+
+;; General settings
+(setq use-short-answers t)
+(setq-default indent-tabs-mode t)
 (setq-default tab-width 2)
+(setq select-enable-clipboard t)
+(setq save-interprogram-paste-before-kill t)
 
-;; Indentation setting for various languages.
-(setq tab-width 4)
-(setq standard-indent 4)
-(setq c-basic-offset 4)
-(setq js-indent-level 2)
-(setq typescript-indent-level 2)
-(setq css-indent-offset 2)
-(setq lua-indent-level 4)
-;; (setq lisp-indent-level 2)
+(setq native-comp-async-report-warnings-errors 'silent)
 
-(indent-tabs-mode -1)
+(add-hook 'emacs-startup-hook
+          (lambda ()
+            (run-with-idle-timer
+             1 nil
+             (lambda ()
+               (dolist (buf '("*scratch*" "*Messages*" "*straight-process*"
+                              "*Async-native-compile-log*"))
+                 (when (get-buffer buf)
+                   (kill-buffer buf)))))))
+
+;; Dired
+(use-package dired
+  :straight nil
+  :custom
+  (dired-listing-switches "-alh --group-directories-first")
+  (dired-kill-when-opening-new-dired-buffer t)
+  (dired-dwim-target t))
+
+(use-package dired-subtree
+  :after dired
+  :config
+  (defun my/dired-open-or-expand ()
+    "Open file, or expand/collapse directory inline as a tree."
+    (interactive)
+    (let ((file (dired-get-filename nil t)))
+      (if (and file (file-directory-p file))
+          (dired-subtree-toggle)
+        (dired-find-file))))
+  (with-eval-after-load 'evil
+    (evil-define-key 'normal dired-mode-map
+      (kbd "RET") #'my/dired-open-or-expand
+      (kbd "^")   #'dired-up-directory)))
+
+;; which-key
+(use-package which-key
+  :custom
+  (which-key-idle-delay 0.2)
+  :config
+  (which-key-mode))
+
+;; Theme
+(use-package gruber-darker-theme
+  :config
+  (load-theme 'gruber-darker t)
+  (global-display-line-numbers-mode 1)
+  (global-hl-line-mode 1)
+  (custom-set-faces
+   '(hl-line ((t (:background "#282828" :extend t))))
+   '(region  ((t (:background "#303540"))))))
+
+;; Tree-sitter
+(use-package treesit
+  :straight nil
+  :config
+  (setq treesit-font-lock-level 4)
+  (setq treesit-language-source-alist
+        '((go         "https://github.com/tree-sitter/tree-sitter-go"         "v0.20.0")
+          (javascript "https://github.com/tree-sitter/tree-sitter-javascript" "v0.23.1")
+          (python     "https://github.com/tree-sitter/tree-sitter-python"     "v0.20.0")
+          (c          "https://github.com/tree-sitter/tree-sitter-c"          "v0.20.0")
+          (cpp        "https://github.com/tree-sitter/tree-sitter-cpp"        "v0.20.0")
+          (rust       "https://github.com/tree-sitter/tree-sitter-rust"       "v0.20.0")
+          (json       "https://github.com/tree-sitter/tree-sitter-json"       "v0.20.0")
+          (bash       "https://github.com/tree-sitter/tree-sitter-bash"       "v0.20.0")
+          (typescript "https://github.com/tree-sitter/tree-sitter-typescript" "v0.20.4" "typescript/src")
+          (tsx        "https://github.com/tree-sitter/tree-sitter-typescript" "v0.20.4" "tsx/src")
+          (html       "https://github.com/tree-sitter/tree-sitter-html"       "v0.20.0")
+          (heex       "https://github.com/phoenixframework/tree-sitter-heex"  "v0.6.0")
+          (elixir     "https://github.com/elixir-lang/tree-sitter-elixir"     "v0.3.3")
+          (yaml       "https://github.com/ikatyang/tree-sitter-yaml"          "v0.5.0")))
+  (add-to-list 'auto-mode-alist '("\\.go\\'"  . go-ts-mode))
+  (add-to-list 'auto-mode-alist '("\\.c\\'"   . c-ts-mode))
+  (add-to-list 'auto-mode-alist '("\\.h\\'"   . c-ts-mode))
+  (add-to-list 'auto-mode-alist '("\\.js\\'"  . js-ts-mode))
+  (add-to-list 'auto-mode-alist '("\\.mjs\\'" . js-ts-mode))
+  (add-to-list 'auto-mode-alist '("\\.jsx\\'" . js-ts-mode))
+  (add-to-list 'auto-mode-alist '("\\.ts\\'"   . typescript-ts-mode))
+  (add-to-list 'auto-mode-alist '("\\.tsx\\'"  . tsx-ts-mode))
+  (add-to-list 'auto-mode-alist '("\\.ya?ml\\'" . yaml-ts-mode)))
+
+(use-package elixir-ts-mode)
+
+(use-package markdown-mode
+  :mode ("\\.md\\'" . markdown-mode))
+
+;; Per-language indent settings
+(dolist (hook '(c-ts-mode-hook c++-ts-mode-hook))
+  (add-hook hook (lambda () (setq indent-tabs-mode nil tab-width 4))))
+(add-hook 'go-ts-mode-hook         (lambda () (setq indent-tabs-mode t   tab-width 4)))
+(add-hook 'elixir-ts-mode-hook     (lambda () (setq indent-tabs-mode nil tab-width 2)))
+(dolist (hook '(js-ts-mode-hook typescript-ts-mode-hook tsx-ts-mode-hook))
+  (add-hook hook (lambda () (setq indent-tabs-mode nil tab-width 2))))
+
+(use-package odin-mode
+  :straight (:host github :repo "mattt-b/odin-mode"))
+
+(use-package terraform-mode
+  :hook (terraform-mode . eglot-ensure)
+  :custom
+  (terraform-indent-level 2))
+
+;; Ensure language server binaries are findable
+(add-to-list 'exec-path (expand-file-name "~/.local/bin"))
+(add-to-list 'exec-path (expand-file-name "~/go/bin"))
+(add-to-list 'exec-path (expand-file-name "~/Software/elixir-ls"))
+(add-to-list 'exec-path (expand-file-name "~/Software/node/bin"))
+
+;; LSP
+(use-package eglot
+  :straight nil
+  :hook
+  ((go-ts-mode          . eglot-ensure)
+   (c-ts-mode           . eglot-ensure)
+   (elixir-ts-mode      . eglot-ensure)
+   (js-ts-mode          . eglot-ensure)
+   (typescript-ts-mode  . eglot-ensure)
+   (tsx-ts-mode         . eglot-ensure))
+  :config
+  (add-to-list 'eglot-server-programs
+               '(elixir-ts-mode . ("elixir-ls")))
+  (add-to-list 'eglot-server-programs
+               '(terraform-mode . ("terraform-ls" "serve")))
+  (add-to-list 'eglot-server-programs
+               `((js-ts-mode typescript-ts-mode tsx-ts-mode)
+                 . ("typescript-language-server" "--stdio"
+                    "--tsserver-path"
+                    ,(string-trim (shell-command-to-string
+                                   "sed -n 's|.*cmd-shim-target=\\(.*\\)/bin/tsserver|\\1|p' $(which tsserver)"))))))
 
 
+;; Completion
+(use-package vertico
+  :config
+  (vertico-mode)
+  (define-key vertico-map (kbd "<escape>") #'abort-minibuffers))
 
-;;------------------------------------------------
-;; Load custom EmacsLisp files
-;;------------------------------------------------
-(defconst user-init-dir
-  (cond ((boundp 'user-emacs-directory)
-         user-emacs-directory)
-        ((boundp 'user-init-directory)
-         user-init-directory)
-        (t "~/.emacs.d/config")))
+(use-package orderless
+  :custom
+  (completion-styles '(orderless basic))
+  (completion-category-overrides '((file (styles basic partial-completion))))
+  :config
+  ;; Treat "/" as an orderless separator so "src/main.go" matches "src/**/main.go"
+  (defun my/orderless-slash-dispatcher (pattern _index _total)
+    (when (string-match-p "/" pattern)
+      (cons 'orderless-regexp
+            (mapconcat #'regexp-quote (split-string pattern "/") ".*"))))
+  (add-to-list 'orderless-style-dispatchers #'my/orderless-slash-dispatcher))
 
-(defun load-user-file (file)
-  (interactive "f")
-  "Load a file in current user's configuration directory"
-  (load-file (expand-file-name file user-init-dir)))
+(use-package consult
+  :custom
+  (consult-preview-key 'any)
+  :config
+  (defun my/project-find-file ()
+    "Fuzzy-find a file in the current project with live preview."
+    (interactive)
+    (require 'project)
+    (let* ((pr (or (project-current nil)
+                   (cons 'transient default-directory)))
+           (files (project-files pr)))
+      (find-file
+       (consult--read files
+                      :prompt "Find file: "
+                      :category 'file
+                      :state (consult--file-preview)
+                      :require-match t)))))
 
+;; Undo
+(use-package undo-fu)
 
-;;(load-user-file "init/early.el")
+;; Clipboard (terminal)
+(use-package xclip
+  :config
+  (xclip-mode 1))
 
+;; Evil mode
+(use-package evil
+  :init
+  (setq evil-want-integration t)
+  (setq evil-want-keybinding nil)
+  (setq evil-esc-delay 0)
+  (setq evil-undo-system 'undo-fu)
+  (setq evil-search-module 'evil)
+  (setq evil-ex-search-persistent-highlight t)
+  :config
+  (evil-mode 1)
+  (define-key evil-normal-state-map (kbd "<escape>") #'evil-ex-nohighlight)
+  (define-key evil-visual-state-map (kbd "<escape>") #'evil-normal-state))
 
+(use-package drag-stuff
+  :after evil
+  :config
+  (drag-stuff-global-mode 1)
+  (evil-define-key '(normal visual) 'global
+    (kbd "S-<up>")   #'drag-stuff-up
+    (kbd "S-<down>") #'drag-stuff-down))
 
+;; Git
+(use-package diff-hl
+  :config
+  (global-diff-hl-mode)
+  (diff-hl-flydiff-mode)
+  (add-hook 'magit-post-refresh-hook #'diff-hl-magit-post-refresh)
+  (custom-set-faces
+   '(diff-hl-insert ((t (:background "#73c936" :foreground "#73c936"))))
+   '(diff-hl-change ((t (:background "#cc8c3c" :foreground "#cc8c3c"))))
+   '(diff-hl-delete ((t (:background "#f43841" :foreground "#f43841"))))))
 
+(use-package magit
+  :config
+  (defun my/magit-blame-toggle ()
+    (interactive)
+    (if (bound-and-true-p magit-blame-mode)
+        (magit-blame-quit)
+      (magit-blame-addition))))
 
+;; AI agent shell
+(use-package agent-shell
+  :config
+  (setq agent-shell-anthropic-authentication
+        (agent-shell-anthropic-make-authentication :login t)))
 
+;; Leader key
+(use-package general
+  :after evil
+  :config
+  (general-evil-setup)
 
+  (general-define-key "<escape>" #'keyboard-quit)
 
+  (general-define-key
+    :states 'normal
+    "U" #'evil-redo)
 
+  (general-create-definer leader!
+    :states '(normal visual motion)
+    :keymaps 'override
+    :prefix "SPC")
 
+  (leader!
+    "SPC" '(execute-extended-command :wk "M-x")
 
-;;------------------------------------------------
-;; Generated config
-;;------------------------------------------------
+    "f"   '(:ignore t :wk "files")
+    "ff"  '(my/project-find-file :wk "find file")
+    "fg"  '(consult-ripgrep :wk "grep project")
+    "fr"  '(consult-recent-file :wk "recent files")
+    "fs"  '(save-buffer :wk "save file")
+    "fd"  '(dired :wk "dired")
 
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(custom-safe-themes
-   '("02f57ef0a20b7f61adce51445b68b2a7e832648ce2e7efb19d217b6454c1b644" "2dd4951e967990396142ec54d376cced3f135810b2b69920e77103e0bcedfba9" default))
- '(package-selected-packages
-   '(go-mode web-mode prettier-js ripgrep dashboard ido-grid-mode exec-path-from-shell move-text project-explorer which-key tree-mode projectile visual-regexp flymake-lua yasnippet lua-mode ido-vertical-mode sly treeview badger-theme slime json-mode undo-fu blamer amx paredit company-box doom-modeline dumb-jump magit zenburn-theme tide command-log-mode luarocks hc-zenburn-theme neotree dired-sidebar multiple-cursors use-package rjsx-mode editorconfig shell-pop flx helpful lsp-ui gruvbox-theme tree-sitter ivy-rich flymake counsel yaml-mode doom-themes smex nord-theme rainbow-delimiters helm-lsp ccls typescript-mode alchemist color-theme-sanityinc-tomorrow auto-complete lsp-ivy all-the-icons spacemacs-theme dap-mode)))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- )
+    "b"   '(:ignore t :wk "buffers")
+    "bb"  '(consult-buffer :wk "switch buffer")
+    "bk"  '(kill-this-buffer :wk "kill buffer")
+
+    "s"   '(:ignore t :wk "search")
+    "sf"  '(consult-find :wk "find file by name")
+    "sg"  '(consult-ripgrep :wk "grep project")
+
+    "|"   '(split-window-right :wk "split vertical")
+    "-"   '(split-window-below :wk "split horizontal")
+
+    "<left>"  '(windmove-left :wk "window left")
+    "<right>" '(windmove-right :wk "window right")
+    "<up>"    '(windmove-up :wk "window up")
+    "<down>"  '(windmove-down :wk "window down")
+
+    "w"   '(:ignore t :wk "windows")
+    "wk"  '(delete-window :wk "close window")
+    "wo"  '(delete-other-windows :wk "close others")
+
+    "p"   '(my/project-find-file :wk "find project file")
+
+    "a"   '(agent-shell :wk "agent shell")
+
+    "<"   '(evil-jump-backward :wk "jump back")
+    ">"   '(evil-jump-forward  :wk "jump forward")
+
+    "g"   '(:ignore t :wk "git/goto")
+    "gg"  '(magit-status :wk "git status")
+    "gb"  '(my/magit-blame-toggle :wk "git blame")
+    "gd"  '(xref-find-definitions :wk "definition")
+    "gr"  '(xref-find-references :wk "references")))
