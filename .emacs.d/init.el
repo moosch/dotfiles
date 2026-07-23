@@ -179,7 +179,8 @@
           (html       "https://github.com/tree-sitter/tree-sitter-html"       "v0.23.2")
           (heex       "https://github.com/phoenixframework/tree-sitter-heex"  "v0.9.0")
           (elixir     "https://github.com/elixir-lang/tree-sitter-elixir"     "v0.3.5")
-          (yaml       "https://github.com/ikatyang/tree-sitter-yaml"          "v0.5.0")))
+          (yaml       "https://github.com/ikatyang/tree-sitter-yaml"          "v0.5.0")
+          (zig        "https://github.com/tree-sitter-grammars/tree-sitter-zig" "v1.1.2")))
   (add-to-list 'auto-mode-alist '("\\.go\\'"  . go-ts-mode))
   (add-to-list 'auto-mode-alist '("\\.c\\'"   . c-ts-mode))
   (add-to-list 'auto-mode-alist '("\\.h\\'"   . c-ts-mode))
@@ -197,12 +198,18 @@
 
 (use-package elixir-ts-mode)
 
+(use-package zig-ts-mode
+  :straight (:host codeberg :repo "meow_king/zig-ts-mode"))
+
 (use-package markdown-mode
   :mode ("\\.md\\'" . markdown-mode))
 
 ;; Per-language indent settings
 (dolist (hook '(c-ts-mode-hook c++-ts-mode-hook))
-  (add-hook hook (lambda () (setq indent-tabs-mode nil tab-width 4))))
+  (add-hook hook (lambda ()
+                   (setq-local indent-tabs-mode nil
+                               tab-width 4
+                               c-ts-mode-indent-offset 4))))
 (add-hook 'go-ts-mode-hook
           (lambda ()
             (setq indent-tabs-mode t tab-width 4)
@@ -213,6 +220,11 @@
             (setq-local indent-tabs-mode nil)
             (setq-local tab-width 2)
             (setq-local elixir-ts-indent-offset 2)))
+(add-hook 'zig-ts-mode-hook
+          (lambda ()
+            (setq-local indent-tabs-mode nil)
+            (setq-local tab-width 4)
+            (setq-local zig-ts-indent-offset 4)))
 (dolist (hook '(js-ts-mode-hook typescript-ts-mode-hook tsx-ts-mode-hook))
   (add-hook hook (lambda () (setq indent-tabs-mode nil tab-width 2))))
 
@@ -227,7 +239,6 @@
 ;; Ensure language server binaries are findable
 (add-to-list 'exec-path (expand-file-name "~/.local/bin"))
 (add-to-list 'exec-path (expand-file-name "~/go/bin"))
-(add-to-list 'exec-path (expand-file-name "~/Software/elixir-ls"))
 (add-to-list 'exec-path (expand-file-name "~/Software/node/bin"))
 
 ;; Eldoc — disable automatic minibuffer popup; use SPC k to show on demand
@@ -246,10 +257,29 @@
    (elixir-ts-mode      . eglot-ensure)
    (js-ts-mode          . eglot-ensure)
    (typescript-ts-mode  . eglot-ensure)
-   (tsx-ts-mode         . eglot-ensure))
+   (tsx-ts-mode         . eglot-ensure)
+   (zig-ts-mode         . eglot-ensure))
   :config
   (add-to-list 'eglot-server-programs
-               '(elixir-ts-mode . ("elixir-ls")))
+               '(elixir-ts-mode . ("dexter" "lsp")))
+  (add-to-list 'eglot-server-programs
+               '(zig-ts-mode . ("zls")))
+  ;; Dexter indexes every .ex/.exs file under the project root, including the
+  ;; full duplicate checkouts Claude Code keeps in .claude/worktrees/.  That
+  ;; makes each module/alias resolve to N identical definitions, so xref pops
+  ;; a *xref* list instead of jumping.  Drop candidates living inside a
+  ;; worktree copy; fall back to the full list if filtering empties it (e.g.
+  ;; when you're actually editing a file inside a worktree).
+  (defun moosch/eglot-drop-worktree-xrefs (xrefs)
+    (or (seq-remove
+         (lambda (x)
+           (let ((f (ignore-errors
+                      (xref-location-group (xref-item-location x)))))
+             (and f (string-match-p "/\\.claude/worktrees/" f))))
+         xrefs)
+        xrefs))
+  (advice-add 'eglot--lsp-xrefs-for-method
+              :filter-return #'moosch/eglot-drop-worktree-xrefs)
   (add-to-list 'eglot-server-programs
                '(terraform-mode . ("terraform-ls" "serve")))
   (add-to-list 'eglot-server-programs
