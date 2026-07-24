@@ -1,12 +1,5 @@
 return {
   {
-    "blazkowolf/gruber-darker.nvim",
-    priority = 1000,
-    config = function()
-      vim.cmd.colorscheme("gruber-darker")
-    end,
-  },
-  {
     "folke/which-key.nvim",
     opts = {
       delay = 100,
@@ -18,9 +11,13 @@ return {
     opts = {
       toggle = {},
       image = {},
-      indent = {},
+      indent = {
+        only_scope = true,
+        only_current = true,
+      },
       win = {},
       notifier = {},
+      statuscolumn = {},
       picker = {
         sources = {
           files = {
@@ -127,7 +124,28 @@ return {
     lazy = false,
     build = ":TSUpdate",
     config = function()
-      require("nvim-treesitter").install({ "elixir", "heex", "eex" })
+      require("nvim-treesitter").install({
+        "elixir", "heex", "eex",
+        "go", "gomod",
+        "c", "cpp",
+        "typescript", "tsx", "javascript",
+        "zig", "odin",
+        "bash", "lua", "vim", "vimdoc",
+        "html", "css", "json", "yaml",
+        "markdown", "markdown_inline",
+        "hcl", "terraform",
+      })
     end,
+  },
+  {
+    "saghen/blink.cmp",
+    dependencies = { "saghen/blink.lib", "rafamadriz/friendly-snippets" },
+    version = "1.*",
+    opts = {
+      keymap = { preset = "enter" },
+      completion = { documentation = { auto_show = true } },
+      sources = { default = { "lsp", "path", "snippets", "buffer" } },
+      fuzzy = { implementation = "prefer_rust_with_warning" },
+    },
   },
 }

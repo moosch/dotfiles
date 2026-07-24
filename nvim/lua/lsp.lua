@@ -23,7 +23,7 @@ local function tsserver_path()
 end
 
 vim.lsp.config("*", {
-  capabilities = vim.lsp.protocol.make_client_capabilities(),
+  capabilities = require("blink.cmp").get_lsp_capabilities(),
 })
 
 vim.lsp.config("gopls", {
@@ -76,7 +76,6 @@ vim.api.nvim_create_autocmd("LspAttach", {
   group = vim.api.nvim_create_augroup("lsp-attach", { clear = true }),
   callback = function(event)
     local client = assert(vim.lsp.get_client_by_id(event.data.client_id))
-    vim.lsp.completion.enable(true, client.id, event.buf)
     local map = function(keys, func, desc)
       vim.keymap.set("n", keys, func, { buffer = event.buf, desc = "LSP: " .. desc })
     end
@@ -90,8 +89,13 @@ vim.api.nvim_create_autocmd("LspAttach", {
     map("<leader>ca", vim.lsp.buf.code_action, "Code Action")
     map("<leader>rn", vim.lsp.buf.rename, "Rename")
 
-    vim.keymap.set("i", "<C-y>", function()
-      vim.lsp.completion.accept()
-    end, { buffer = event.buf, desc = "LSP: Accept completion" })
+    if client.name == "gopls" then
+      vim.api.nvim_create_autocmd("BufWritePre", {
+        buffer = event.buf,
+        callback = function()
+          vim.lsp.buf.format({ async = false })
+        end,
+      })
+    end
   end,
 })

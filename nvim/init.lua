@@ -45,3 +45,6 @@ require("options")
 require("keymaps")
 require("autocmds")
 require("lsp")
+
+vim.cmd.colorscheme("mooschcolorscheme")
+
