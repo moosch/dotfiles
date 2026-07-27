@@ -1,4 +1,4 @@
-for _, path in ipairs({ "~/.local/bin", "~/go/bin", "~/Software/node/bin" }) do
+for _, path in ipairs({ "~/.local/bin", "/usr/local/bin", "~/go/bin" }) do
   vim.env.PATH = vim.fn.expand(path) .. ":" .. vim.env.PATH
 end
 
@@ -69,7 +69,13 @@ vim.lsp.config("ts_ls", {
   filetypes = { "javascript", "javascriptreact", "typescript", "typescriptreact", "tsx", "jsx" },
 })
 
-vim.lsp.enable({ "gopls", "clangd", "dexter", "zls", "terraformls", "ts_ls" })
+vim.lsp.config("elmls", {
+  cmd = { "elm-language-server" },
+  filetypes = { "elm" },
+  root_markers = { "elm.json", ".git" },
+})
+
+vim.lsp.enable({ "gopls", "clangd", "dexter", "zls", "terraformls", "ts_ls", "elmls" })
 
 vim.api.nvim_create_autocmd("LspAttach", {
   desc = "LSP keybindings",
