@@ -25,4 +25,7 @@ vim.keymap.set("n", "<leader>>", "<C-i>", { desc = "Jump forward" })
 vim.keymap.set("v", "<S-Down>", ":m '>+1<CR>gv=gv", { desc = "Move selection down" })
 vim.keymap.set("v", "<S-Up>", ":m '<-2<CR>gv=gv", { desc = "Move selection up" })
 
+vim.keymap.set("v", "<Tab>", ">gv", { desc = "Indent right" })
+vim.keymap.set("v", "<S-Tab>", "<gv", { desc = "Indent left" })
+
 vim.keymap.set("t", "<Esc><Esc>", "<C-\\><C-n>", { desc = "Exit terminal mode" })

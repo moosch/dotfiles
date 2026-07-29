@@ -77,6 +77,72 @@ vim.lsp.config("elmls", {
 
 vim.lsp.enable({ "gopls", "clangd", "dexter", "zls", "terraformls", "ts_ls", "elmls" })
 
+local severity = { "● Error", "◆ Warning", "● Hint", "● Info" }
+
+local function Diag()
+  local diags = vim.diagnostic.get(0, { lnum = vim.fn.line(".") - 1 })
+  if #diags == 0 then
+    return nil
+  end
+  local lines = {}
+  for _, d in ipairs(diags) do
+    local icon = severity[d.severity] or "●"
+    local msg = d.message:gsub("\n", " "):sub(1, 200)
+    table.insert(lines, icon .. " " .. msg)
+  end
+  return lines
+end
+
+local function Hover()
+  local bufnr = vim.api.nvim_get_current_buf()
+  local clients = vim.lsp.get_clients({ bufnr = bufnr })
+  if #clients == 0 then
+    return
+  end
+  local params = vim.lsp.util.make_position_params(0, clients[1].offset_encoding)
+  local diag_lines = Diag()
+
+  vim.lsp.buf_request(bufnr, "textDocument/hover", params, function(err, result, ctx)
+    local hover_lines = {}
+    if result and result.contents then
+      hover_lines = vim.lsp.util.convert_input_to_markdown_lines(result.contents)
+    end
+
+    if not diag_lines and #hover_lines == 0 then
+      return
+    end
+
+    local combined = {}
+    if diag_lines then
+      for _, line in ipairs(diag_lines) do
+        table.insert(combined, line)
+      end
+      if #hover_lines > 0 then
+        table.insert(combined, "")
+      end
+    end
+    for _, line in ipairs(hover_lines) do
+      table.insert(combined, line)
+    end
+
+    local trimmed = {}
+    for _, line in ipairs(combined) do
+      if line ~= "" then
+        table.insert(trimmed, line)
+      end
+    end
+
+    local fbuf, fwin = vim.lsp.util.open_floating_preview(trimmed, "markdown", {
+      border = "rounded",
+      focusable = true,
+    })
+    vim.keymap.set("n", "q", "<Cmd>close<CR>", { buffer = fbuf, silent = true })
+    vim.keymap.set("n", "<Esc>", "<Cmd>close<CR>", { buffer = fbuf, silent = true })
+    vim.api.nvim_win_set_option(fwin, "wrap", true)
+    vim.api.nvim_set_current_win(fwin)
+  end)
+end
+
 vim.api.nvim_create_autocmd("LspAttach", {
   desc = "LSP keybindings",
   group = vim.api.nvim_create_augroup("lsp-attach", { clear = true }),
@@ -91,7 +157,7 @@ vim.api.nvim_create_autocmd("LspAttach", {
     map("gr", vim.lsp.buf.references, "References")
     map("gI", vim.lsp.buf.implementation, "Go to Implementation")
     map("gy", vim.lsp.buf.type_definition, "Go to Type Definition")
-    map("K", vim.lsp.buf.hover, "Hover Documentation")
+    map("K", Hover, "Hover Documentation")
     map("<leader>ca", vim.lsp.buf.code_action, "Code Action")
     map("<leader>rn", vim.lsp.buf.rename, "Rename")
 
