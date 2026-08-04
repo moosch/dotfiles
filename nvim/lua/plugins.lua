@@ -35,6 +35,18 @@ return {
         desc = "Find Files",
       },
       {
+        "<leader>o",
+        function()
+          for _, client in ipairs(vim.lsp.get_clients({ bufnr = 0 })) do
+            if client:supports_method("textDocument/documentSymbol") then
+              return Snacks.picker.lsp_symbols()
+            end
+          end
+          Snacks.picker.treesitter()
+        end,
+        desc = "Outline (Document Symbols)",
+      },
+      {
         "<leader>b",
         function()
           Snacks.picker.buffers()
