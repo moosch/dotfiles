@@ -22,6 +22,9 @@ end, { desc = "Close buffer without breaking layout" })
 vim.keymap.set("n", "<leader><", "<C-o>", { desc = "Jump back" })
 vim.keymap.set("n", "<leader>>", "<C-i>", { desc = "Jump forward" })
 
+vim.keymap.set("n", "<leader>f", "za", { desc = "Toggle fold at cursor" })
+vim.keymap.set("n", "<leader>C", "zz", { desc = "Center cursor line" })
+
 vim.keymap.set("v", "<S-Down>", ":m '>+1<CR>gv=gv", { desc = "Move selection down" })
 vim.keymap.set("v", "<S-Up>", ":m '<-2<CR>gv=gv", { desc = "Move selection up" })
 
