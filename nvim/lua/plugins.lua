@@ -166,7 +166,12 @@ return {
     version = "1.*",
     opts = {
       keymap = { preset = "enter" },
-      completion = { documentation = { auto_show = true } },
+      completion = {
+        documentation = { auto_show = true },
+        -- the "enter" preset expects explicit accept; auto_insert previews the
+        -- item into the buffer and its undo range goes stale as you keep typing
+        list = { selection = { preselect = true, auto_insert = false } },
+      },
       sources = { default = { "lsp", "path", "snippets", "buffer" } },
       fuzzy = { implementation = "prefer_rust_with_warning" },
     },

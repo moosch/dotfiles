@@ -30,5 +30,10 @@ vim.keymap.set("v", "<S-Up>", ":m '<-2<CR>gv=gv", { desc = "Move selection up" }
 
 vim.keymap.set("v", "<Tab>", ">gv", { desc = "Indent right" })
 vim.keymap.set("v", "<S-Tab>", "<gv", { desc = "Indent left" })
+vim.keymap.set("v", ">", ">gv", { desc = "Indent right, keep selection" })
+vim.keymap.set("v", "<", "<gv", { desc = "Indent left, keep selection" })
 
 vim.keymap.set("t", "<Esc><Esc>", "<C-\\><C-n>", { desc = "Exit terminal mode" })
+
+vim.keymap.set("n", "<leader>%", "<Cmd>QueryReplace<CR>", { desc = "Query replace (from cursor)" })
+vim.keymap.set("n", "<leader>5", "<Cmd>QueryReplaceRegexp<CR>", { desc = "Query replace regexp (from cursor)" })
