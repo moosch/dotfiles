@@ -143,6 +143,36 @@ local function Hover()
   end)
 end
 
+local function is_dotdir_path(filename)
+  return filename:match("/%.[^/]+/") ~= nil
+end
+
+local function goto_definition_no_dotdirs()
+  vim.lsp.buf.definition({
+    on_list = function(options)
+      local items = vim.tbl_filter(function(item)
+        return not is_dotdir_path(item.filename)
+      end, options.items)
+
+      if #items == 0 then
+        vim.notify("gd: no definitions outside dot-directories", vim.log.levels.WARN)
+        return
+      end
+
+      if #items == 1 then
+        local item = items[1]
+        vim.cmd("normal! m'")
+        vim.cmd("edit " .. vim.fn.fnameescape(item.filename))
+        vim.api.nvim_win_set_cursor(0, { item.lnum, (item.col or 1) - 1 })
+      else
+        options.items = items
+        vim.fn.setqflist({}, " ", options)
+        vim.cmd("copen")
+      end
+    end,
+  })
+end
+
 vim.api.nvim_create_autocmd("LspAttach", {
   desc = "LSP keybindings",
   group = vim.api.nvim_create_augroup("lsp-attach", { clear = true }),
@@ -152,7 +182,7 @@ vim.api.nvim_create_autocmd("LspAttach", {
       vim.keymap.set("n", keys, func, { buffer = event.buf, desc = "LSP: " .. desc })
     end
 
-    map("gd", vim.lsp.buf.definition, "Go to Definition")
+    map("gd", goto_definition_no_dotdirs, "Go to Definition")
     map("gD", vim.lsp.buf.declaration, "Go to Declaration")
     map("gr", vim.lsp.buf.references, "References")
     map("gI", vim.lsp.buf.implementation, "Go to Implementation")

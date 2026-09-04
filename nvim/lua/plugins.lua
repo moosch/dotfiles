@@ -176,4 +176,44 @@ return {
       fuzzy = { implementation = "prefer_rust_with_warning" },
     },
   },
+  {
+    "saattrupdan/pi-agent.nvim",
+    config = function()
+      require("pi-agent").setup({
+        command = "pi",      -- command to run in the floating terminal
+        width   = 0.8,       -- fraction of editor width
+        height  = 0.8,       -- fraction of editor height
+        border  = "rounded", -- any value accepted by nvim_open_win
+        pane_gap = 1,         -- empty cells between split panes (0 disables)
+        keymap  = "<C-,>",   -- toggle keymap (string or table of strings; set to false or "" to disable)
+        abort_keymap = "<C-c>", -- terminal-mode keymap that aborts the current Pi run (string or table; set to false or "" to disable)
+      })
+    end,
+  },
+  {
+    "milanglacier/minuet-ai.nvim",
+    dependencies = { "nvim-lua/plenary.nvim" },
+    config = function()
+      require("minuet").setup({
+        provider = "openai_compatible",
+        provider_options = {
+          openai_compatible = {
+            end_point = "http://<IP>:1234/v1/chat/completions",
+            model = "qwen3-coder",
+            optional = {
+              max_tokens = 256,
+            }
+          }
+        },
+        auto_trigger_ft = {},
+        keymap = {
+          accept = "<M-CR>", -- accept whole completion.
+          accept_line = "<M-Tab>",
+          prev = "<C-space>", -- Cycle to previous completion item or manually invoke completion.
+          dismiss = "<Esc>",
+        },
+      })
+    end
+  },
 }
+-- 
