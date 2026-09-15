@@ -70,7 +70,43 @@ return {
       {
         "<leader>s",
         function()
-          Snacks.picker.grep()
+          Snacks.picker.grep({
+            confirm = function(picker, item)
+              -- Send every filtered result to the quickfix list, open it at the
+              -- bottom, and jump to the item that was selected. Focus lands in
+              -- the main window on that location; <C-w>j hops to the list, where
+              -- <CR> opens any other result in the same main window.
+              local idx = picker.list.cursor
+              local items = picker:items()
+              picker:close()
+              if not item or #items == 0 then
+                return
+              end
+              local qf = {}
+              for _, it in ipairs(items) do
+                qf[#qf + 1] = {
+                  filename = Snacks.picker.util.path(it),
+                  bufnr = it.buf,
+                  lnum = it.pos and it.pos[1] or 1,
+                  col = it.pos and it.pos[2] + 1 or 1,
+                  end_lnum = it.end_pos and it.end_pos[1] or nil,
+                  end_col = it.end_pos and it.end_pos[2] + 1 or nil,
+                  text = it.line or it.comment or it.text,
+                  valid = true,
+                }
+              end
+              idx = math.min(math.max(idx, 1), #qf)
+              vim.fn.setqflist({}, " ", {
+                title = "Grep: " .. (picker:filter().search or picker:filter().pattern or ""),
+                items = qf,
+                idx = idx,
+              })
+              vim.cmd("botright copen")
+              -- `:cc` from the quickfix window opens the entry in the previous
+              -- (main) window and moves the cursor there.
+              vim.cmd("cc " .. idx)
+            end,
+          })
         end,
         desc = "Grep (rg)",
       },
@@ -198,7 +234,7 @@ return {
         provider = "openai_compatible",
         provider_options = {
           openai_compatible = {
-            end_point = "http://<IP>:1234/v1/chat/completions",
+            end_point = "http://192.168.68.100:1234/v1/chat/completions",
             model = "qwen3-coder",
             optional = {
               max_tokens = 256,

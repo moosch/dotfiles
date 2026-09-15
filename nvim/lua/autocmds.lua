@@ -97,3 +97,16 @@ vim.api.nvim_create_autocmd("FileType", {
     vim.bo.shiftwidth = 4
   end,
 })
+
+vim.api.nvim_create_autocmd("FileType", {
+  desc = "Close quickfix/location list with q",
+  group = vim.api.nvim_create_augroup("quickfix-quit", { clear = true }),
+  pattern = { "qf" },
+  callback = function(args)
+    vim.keymap.set("n", "q", "<cmd>close<cr>", {
+      buffer = args.buf,
+      nowait = true,
+      desc = "Close list",
+    })
+  end,
+})
