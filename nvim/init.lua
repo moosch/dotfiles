@@ -46,6 +46,7 @@ require("keymaps")
 require("autocmds")
 require("lsp")
 require("query_replace")
+require("c_docs")
 
 vim.cmd.colorscheme("mooschcolorscheme")
 

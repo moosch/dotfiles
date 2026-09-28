@@ -49,7 +49,38 @@ return {
       {
         "<leader>b",
         function()
-          Snacks.picker.buffers()
+          local git_status = {}
+          local root = vim.fs.root(0, ".git")
+          if root then
+            local out = vim.fn.systemlist({ "git", "-C", root, "status", "--porcelain=v1", "-uall" })
+            if vim.v.shell_error == 0 then
+              for _, line in ipairs(out) do
+                local xy, file = line:match("^(..) (.+)$")
+                if xy and file then
+                  git_status[root .. "/" .. file] = xy
+                end
+              end
+            end
+          end
+
+          Snacks.picker.buffers({
+            format = function(item, picker)
+              item.status = git_status[vim.api.nvim_buf_get_name(item.buf)]
+              local git_hl
+              if item.status then
+                -- also sets item.filename_hl to the git status color
+                git_hl = Snacks.picker.format.file_git_status(item, picker)
+              end
+              if vim.bo[item.buf].modified then
+                item.filename_hl = "SnacksPickerBufModified" -- unsaved wins over git color
+              end
+              local ret = Snacks.picker.format.buffer(item, picker)
+              if git_hl then
+                vim.list_extend(ret, git_hl)
+              end
+              return ret
+            end,
+          })
         end,
         desc = "Buffers",
       },
@@ -250,6 +281,14 @@ return {
         },
       })
     end
+  },
+  {
+    -- Inline struct field sizes/offsets and sizeof totals for C, from clangd.
+    dir = vim.fn.expand("moosch/structlens.nvim"),
+    name = "structlens.nvim",
+    ft = "c",
+    cmd = { "StructLens", "StructLensToggle", "StructLensMode" },
+    opts = {},
   },
 }
 -- 

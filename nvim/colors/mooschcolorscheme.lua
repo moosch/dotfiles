@@ -28,6 +28,8 @@ hl(0, "DiffAdd", { fg = "#f5e40f" })
 hl(0, "GitGutterAdd", { fg = "#f5e40f" })
 hl(0, "cssIncludeKeyword", { fg = "#f5e40f" })
 hl(0, "Keyword", { fg = "#f5e40f" })
+hl(0, "SnacksPickerBufModified", { link = "Keyword" })
+hl(0, "SnacksPickerGitStatusUntracked", { fg = "#c9884a" })
 
 hl(0, "IncSearch", { fg = "#9c9c9a" })
 hl(0, "Title", { fg = "#afb1b1" })

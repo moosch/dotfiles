@@ -37,3 +37,7 @@ vim.keymap.set("t", "<Esc><Esc>", "<C-\\><C-n>", { desc = "Exit terminal mode" }
 
 vim.keymap.set("n", "<leader>%", "<Cmd>QueryReplace<CR>", { desc = "Query replace (from cursor)" })
 vim.keymap.set("n", "<leader>5", "<Cmd>QueryReplaceRegexp<CR>", { desc = "Query replace regexp (from cursor)" })
+
+vim.keymap.set("n", "<leader>h", function()
+  require("c_docs").toggle()
+end, { desc = "C reference docs" })
