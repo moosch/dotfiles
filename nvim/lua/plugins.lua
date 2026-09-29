@@ -284,8 +284,7 @@ return {
   },
   {
     -- Inline struct field sizes/offsets and sizeof totals for C, from clangd.
-    dir = vim.fn.expand("moosch/structlens.nvim"),
-    name = "structlens.nvim",
+    "moosch/structlens.nvim",
     ft = "c",
     cmd = { "StructLens", "StructLensToggle", "StructLensMode" },
     opts = {},
