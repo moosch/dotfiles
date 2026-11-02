@@ -41,6 +41,8 @@ require("lazy").setup({
   },
 })
 
+require("notify_source").setup()
+
 require("options")
 require("keymaps")
 require("autocmds")

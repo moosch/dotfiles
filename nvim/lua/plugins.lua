@@ -7,6 +7,7 @@ return {
   },
   {
     "folke/snacks.nvim",
+    priority = 1000,
     lazy = false,
     opts = {
       toggle = {},
@@ -288,6 +289,30 @@ return {
     ft = "c",
     cmd = { "StructLens", "StructLensToggle", "StructLensMode" },
     opts = {},
+  },
+
+  {
+    "moosch/ami.nvim",
+    dependencies = {
+      "moosch/ami-chat.nvim",              -- chat advisor panel.
+      "moosch/ami-history.nvim",           -- branching history tree (multi-turn + :AmiTree).
+      "moosch/ami-inline.nvim",            -- inline (FIM) completion.
+      "moosch/ami-persona.nvim",           -- Adds a persona to chat responses.
+      -- "moosch/ami-proactive.nvim",      -- Periodic, proactive suggestions in chat.
+    },
+    config = function()
+      require("ami").setup({
+        -- point ami at your LM Studio if it isn't on localhost:
+        model = { endpoint = "http://192.168.68.100:1234/v1", model = "qwen3-coder" },
+        extensions = {
+          require("ami-chat"),
+          require("ami-history"),
+          require("ami-inline"),
+          require("ami-persona"),
+        },
+        inline = { endpoint = "http://192.168.68.100:1234/v1", model = "deepseek-coder" },
+      })
+    end,
   },
 }
 -- 

@@ -38,7 +38,11 @@ vim.lsp.config("gopls", {
 })
 
 vim.lsp.config("clangd", {
-  cmd = { "clangd", "--fallback-style=c89" },
+  -- --log=error keeps clangd from streaming thousands of info lines to
+  -- stderr (Neovim records all LSP stderr into lsp.log, which is what made
+  -- that file balloon to ~2GB). Formatting falls back to clangd's LLVM
+  -- default (the old --fallback-style=c89 was invalid and spammed errors).
+  cmd = { "clangd", "--log=error" },
   filetypes = { "c", "cpp", "objc", "objcpp" },
 })
 
@@ -75,7 +79,23 @@ vim.lsp.config("elmls", {
   root_markers = { "elm.json", ".git" },
 })
 
-vim.lsp.enable({ "gopls", "clangd", "dexter", "zls", "terraformls", "ts_ls", "elmls" })
+-- Only enable servers whose binary is actually installed on this machine, so
+-- opening a filetype on a box missing that server doesn't fire a spawn-failed
+-- notification.
+local function enable_installed(names)
+  local enabled = {}
+  for _, name in ipairs(names) do
+    local cfg = vim.lsp.config[name]
+    local cmd = cfg and cfg.cmd
+    local bin = type(cmd) == "table" and cmd[1] or nil
+    if bin and vim.fn.executable(bin) == 1 then
+      table.insert(enabled, name)
+    end
+  end
+  vim.lsp.enable(enabled)
+end
+
+enable_installed({ "gopls", "clangd", "dexter", "zls", "terraformls", "ts_ls", "elmls" })
 
 local severity = { "● Error", "◆ Warning", "● Hint", "● Info" }
 
