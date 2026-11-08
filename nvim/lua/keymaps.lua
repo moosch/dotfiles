@@ -15,9 +15,12 @@ vim.keymap.set("n", "<leader><up>", "<C-w>k", { desc = "Focus up" })
 vim.keymap.set("n", "<leader><down>", "<C-w>j", { desc = "Focus down" })
 
 vim.keymap.set("n", "<leader>w", function()
-  vim.cmd.bp()
-  vim.cmd.bd("#")
+  require("closed_buffers").close()
 end, { desc = "Close buffer without breaking layout" })
+
+vim.keymap.set("n", "<leader>W", function()
+  require("closed_buffers").reopen()
+end, { desc = "Reopen last closed buffer" })
 
 vim.keymap.set("n", "<leader><", "<C-o>", { desc = "Jump back" })
 vim.keymap.set("n", "<leader>>", "<C-i>", { desc = "Jump forward" })

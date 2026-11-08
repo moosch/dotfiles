@@ -44,6 +44,7 @@ require("lazy").setup({
 require("notify_source").setup()
 
 require("options")
+require("statusline").setup()
 require("keymaps")
 require("autocmds")
 require("lsp")

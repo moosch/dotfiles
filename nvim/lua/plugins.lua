@@ -31,7 +31,7 @@ return {
       {
         "<leader>p",
         function()
-          Snacks.picker.files()
+          Snacks.picker.files(require("search_history").opts("files"))
         end,
         desc = "Find Files",
       },
@@ -102,7 +102,7 @@ return {
       {
         "<leader>s",
         function()
-          Snacks.picker.grep({
+          Snacks.picker.grep(require("search_history").opts("grep", {
             confirm = function(picker, item)
               -- Send every filtered result to the quickfix list, open it at the
               -- bottom, and jump to the item that was selected. Focus lands in
@@ -138,7 +138,7 @@ return {
               -- (main) window and moves the cursor there.
               vim.cmd("cc " .. idx)
             end,
-          })
+          }))
         end,
         desc = "Grep (rg)",
       },
@@ -303,14 +303,14 @@ return {
     config = function()
       require("ami").setup({
         -- point ami at your LM Studio if it isn't on localhost:
-        model = { endpoint = "http://192.168.68.100:1234/v1", model = "qwen3-coder" },
+        model = { endpoint = "http://192.168.68.150:1234/v1", model = "qwen3-coder" },
         extensions = {
           require("ami-chat"),
           require("ami-history"),
           require("ami-inline"),
           require("ami-persona"),
         },
-        inline = { endpoint = "http://192.168.68.100:1234/v1", model = "deepseek-coder" },
+        inline = { endpoint = "http://192.168.68.150:1234/v1", model = "deepseek-coder" },
       })
     end,
   },
