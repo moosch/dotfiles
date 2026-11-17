@@ -42,6 +42,17 @@ vim.api.nvim_create_autocmd("FileType", {
   end,
 })
 
+-- Neovim ships no indent script for Elixir, so without this the new line after
+-- `do` only copies the previous line's indent (autoindent).
+vim.api.nvim_create_autocmd("FileType", {
+  desc = "Elixir: treesitter indent",
+  group = vim.api.nvim_create_augroup("indent-elixir", { clear = true }),
+  pattern = { "elixir", "eelixir", "heex" },
+  callback = function()
+    vim.bo.indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
+  end,
+})
+
 -- Neovim ignores a swap file whose owning process is dead, but never deletes
 -- it, so orphans from uncleanly-killed sessions pile up in ~/.local/state and
 -- re-prompt forever. These two helpers identify an orphan so we can drop it.

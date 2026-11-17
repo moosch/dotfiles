@@ -93,7 +93,7 @@ function M.setup()
     group = vim.api.nvim_create_augroup("statusline-hl", { clear = true }),
     callback = define_highlights,
   })
-  vim.o.laststatus = 3 -- one global statusline, always visible
+  vim.o.laststatus = 2 -- one statusline per window, always visible
   vim.o.statusline = "%!v:lua.require'statusline'.render()"
 end
 

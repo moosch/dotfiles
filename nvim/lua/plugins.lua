@@ -292,27 +292,84 @@ return {
   },
 
   {
+    "MeanderingProgrammer/render-markdown.nvim",
+    dependencies = {
+      "nvim-treesitter/nvim-treesitter",
+      "nvim-mini/mini.nvim",
+      "nvim-mini/mini.icons",
+    },            -- if you use the mini.nvim suite
+    -- dependencies = { 'nvim-treesitter/nvim-treesitter', 'nvim-mini/mini.icons' },        -- if you use standalone mini plugins
+    -- dependencies = { 'nvim-treesitter/nvim-treesitter', 'nvim-tree/nvim-web-devicons' }, -- if you prefer nvim-web-devicons
+    ---@module 'render-markdown'
+    ---@type render.md.UserConfig
+    opts = {},
+  },
+
+  -- {
+  --   "moosch/ami.nvim",
+  --   dependencies = {
+  --     "moosch/ami-chat.nvim",              -- chat advisor panel.
+  --     "moosch/ami-history.nvim",           -- branching history tree (multi-turn + :AmiTree).
+  --     "moosch/ami-inline.nvim",            -- inline (FIM) completion.
+  --     "moosch/ami-persona.nvim",           -- Adds a persona to chat responses.
+  --     -- "moosch/ami-proactive.nvim",      -- Periodic, proactive suggestions in chat.
+  --   },
+  --   config = function()
+  --     require("ami").setup({
+  --       -- point ami at your LM Studio if it isn't on localhost:
+  --       model = { endpoint = "http://192.168.68.150:1234/v1", model = "qwen3-coder" },
+  --       extensions = {
+  --         require("ami-chat"),
+  --         require("ami-history"),
+  --         require("ami-inline"),
+  --         require("ami-persona"),
+  --       },
+  --       inline = { endpoint = "http://192.168.68.150:1234/v1", model = "deepseek-coder" },
+  --     })
+  --   end,
+  -- },
+
+  {
     "moosch/ami.nvim",
     dependencies = {
-      "moosch/ami-chat.nvim",              -- chat advisor panel.
-      "moosch/ami-history.nvim",           -- branching history tree (multi-turn + :AmiTree).
-      "moosch/ami-inline.nvim",            -- inline (FIM) completion.
-      "moosch/ami-persona.nvim",           -- Adds a persona to chat responses.
-      -- "moosch/ami-proactive.nvim",      -- Periodic, proactive suggestions in chat.
+      "moosch/ami-chat.nvim",
+      "moosch/ami-inline.nvim",
+      "moosch/ami-nudge.nvim",
+      "moosch/ami-context-treesitter.nvim",
+      "moosch/ami-context-diagnostic.nvim",
     },
     config = function()
       require("ami").setup({
-        -- point ami at your LM Studio if it isn't on localhost:
         model = { endpoint = "http://192.168.68.150:1234/v1", model = "qwen3-coder" },
         extensions = {
           require("ami-chat"),
-          require("ami-history"),
           require("ami-inline"),
-          require("ami-persona"),
+          require("ami-nudge"),
+          require("ami-context-treesitter"),
+          require("ami-context-diagnostic"),
         },
-        inline = { endpoint = "http://192.168.68.150:1234/v1", model = "deepseek-coder" },
+        inline = {
+          endpoint = "http://192.168.68.150:1234/v1",
+          model = "qwen3-coder", -- "deepseek-coder",
+          indicator = "...",
+          keymaps = {
+          },
+        },
+        nudge  = {
+          enabled = false,
+          endpoint = "http://192.168.68.150:1234/v1",
+          model = "qwen3-coder",
+        },
+        treesitter = {
+          scope = "always",
+        },
+        diagnostics = {
+          auto         = false,
+          max_items    = 5,
+          min_severity = vim.diagnostic.severity.ERROR,
+        },
       })
-    end,
+    end
   },
 }
--- 
+

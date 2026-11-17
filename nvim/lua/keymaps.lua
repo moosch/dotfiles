@@ -18,6 +18,10 @@ vim.keymap.set("n", "<leader>w", function()
   require("closed_buffers").close()
 end, { desc = "Close buffer without breaking layout" })
 
+vim.keymap.set("n", "<leader>q", function()
+  require("closed_buffers").close_with_pane()
+end, { desc = "Close buffer and pane (unless last)" })
+
 vim.keymap.set("n", "<leader>W", function()
   require("closed_buffers").reopen()
 end, { desc = "Reopen last closed buffer" })

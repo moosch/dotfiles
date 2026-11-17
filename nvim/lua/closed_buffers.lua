@@ -35,6 +35,33 @@ function M.close()
   end
 end
 
+-- Close the current buffer and its window, remembering the buffer. Falls back
+-- to M.close() when this is the only window left.
+function M.close_with_pane()
+  local wins = vim.tbl_filter(function(w)
+    return vim.api.nvim_win_get_config(w).relative == ""
+  end, vim.api.nvim_tabpage_list_wins(0))
+  if #wins <= 1 then
+    return M.close()
+  end
+
+  local buf = vim.api.nvim_get_current_buf()
+  local path = vim.api.nvim_buf_get_name(buf)
+  local is_file = path ~= "" and vim.bo[buf].buftype == ""
+  local pos = vim.api.nvim_win_get_cursor(0)
+
+  vim.cmd.close()
+
+  -- Keep the buffer if another window still shows it.
+  if #vim.fn.win_findbuf(buf) > 0 then
+    return
+  end
+  local ok = pcall(vim.cmd.bd, buf)
+  if ok and is_file then
+    push(path, pos)
+  end
+end
+
 -- Reopen the most recently closed buffer.
 function M.reopen()
   local entry = table.remove(stack)
