@@ -1,3 +1,7 @@
+local function moosch(name)
+  return { url = "https://git.moosch.dev/moosch/" .. name .. ".nvim", name = name }
+end
+
 return {
   {
     "folke/which-key.nvim",
@@ -23,6 +27,7 @@ return {
         sources = {
           files = {
             cmd = "rg",
+            hidden = true,
           },
         },
       },
@@ -330,46 +335,96 @@ return {
   -- },
 
   {
-    "moosch/ami.nvim",
+    url = "https://git.moosch.dev/moosch/ami.nvim",
+    name = "ami.nvim",
     dependencies = {
-      "moosch/ami-chat.nvim",
-      "moosch/ami-inline.nvim",
-      "moosch/ami-nudge.nvim",
-      "moosch/ami-context-treesitter.nvim",
-      "moosch/ami-context-diagnostic.nvim",
+      moosch("ami-chat"),
+      moosch("ami-inline"),
+      moosch("ami-nudge"),
+      moosch("ami-tools"),
+      moosch("ami-luagent"),
+      moosch("ami-context-diagnostic"),
+      { url = "https://git.moosch.dev/moosch/ami-treesitter.nvim", name = "ami-context-treesitter" }, -- remote repo is named ami-treesitter
     },
     config = function()
       require("ami").setup({
-        model = { endpoint = "http://192.168.68.150:1234/v1", model = "qwen3-coder" },
+        -- Default model; every extension falls back to it unless it sets its own.
+        model = {
+          endpoint = "http://192.168.68.150:1234/v1",
+          model    = "qwen3-coder",
+          -- api_key = function() return os.getenv("OPENAI_API_KEY") end,  -- hosted servers only
+        },
+
         extensions = {
-          require("ami-chat"),
-          require("ami-inline"),
-          require("ami-nudge"),
-          require("ami-context-treesitter"),
-          require("ami-context-diagnostic"),
+          "ami-tools",               -- tool registry; load it so chat/agent/context tools exist
+          "ami-chat",
+          "ami-inline",
+          "ami-nudge",
+          "ami-luagent",
+          "ami-context-diagnostic",
+          "ami-context-treesitter",
         },
-        inline = {
-          endpoint = "http://192.168.68.150:1234/v1",
-          model = "qwen3-coder", -- "deepseek-coder",
-          indicator = "...",
+
+        context = {
+          token_budget = 8000,       -- estimated tokens of file context per request
+          lsp_deps     = true,
+        },
+
+        tools = {
+          -- workspace = nil,        -- nil = project root of the current buffer
+          groups  = { read = true, write = false, run = false },  -- write/run are opt-in
+          approve = { write = true, run = true },                 -- keep these true
+          -- max_output_bytes = 10000, timeout_ms = 60000,
+        },
+
+        chat = {
+          -- endpoint/model/api_key: unset = the default model (:AmiModel chat to pick)
+          tools           = true,    -- false | true (read group) | { "grep", "read_file", ... }
+          tools_max_steps = 10,
+          history_token_budget = 6000,
+          -- context_window = 32768, -- shows "~3.2k/32k" in the header
+          shell = { enabled = true, timeout_ms = 30000 },  -- `!cmd` in the input
+          ui = { position = "right", width = 0.4 },
           keymaps = {
+            toggle = "<leader>ac",   -- map :AmiChat globally
           },
+          -- highlights = { tool = { link = "Function" } },
         },
-        nudge  = {
-          enabled = false,
+
+        inline = {
+          -- FIM needs a base/coder model that knows the FIM tokens below.
           endpoint = "http://192.168.68.150:1234/v1",
-          model = "qwen3-coder",
+          model = "deepseek-coder",
+          indicator = "...",
+          auto = false,              -- true = suggest as you type; false = <C-g> to ask
+          keymaps = { trigger = "<C-g>", accept = "<Tab>", dismiss = "<M-e>", next = "<M-[>", prev = "<M-]>" },
         },
-        treesitter = {
-          scope = "always",
+
+        nudge = {
+          enabled = false,           -- unprompted suggestions on idle/save
+          -- on_idle = true, idle_ms = 20000, on_save = true, min_interval_s = 180,
         },
+
+        agent = {
+          -- endpoint/model/api_key: unset = the default model (:AmiModel agent to pick)
+          max_steps = 25,            -- model requests before it asks to continue
+          tools     = { "read" },    -- add "write" / "run" here AND in tools.groups to allow them
+          ui = { position = "right", width = 0.4 },  -- "right" | "left" | "bottom" | "tab"
+        },
+
         diagnostics = {
-          auto         = false,
-          max_items    = 5,
+          auto = true,               -- add the active file's diagnostics to each turn
+          max_items = 5,
           min_severity = vim.diagnostic.severity.ERROR,
         },
+
+        treesitter = {
+          scope   = "auto",          -- enclosing function: "auto" | "always" | false
+          outline = "auto",
+          imports = "auto",
+        },
       })
-    end
+    end,
   },
 }
 

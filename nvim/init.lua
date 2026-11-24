@@ -22,11 +22,6 @@ vim.opt.rtp:prepend(lazypath)
 require("lazy").setup({
   { import = "plugins" },
 }, {
-  dev = {
-    path = "~/moosch/ami",
-    patterns = { "moosch/ami" }, -- prefix match: ami.nvim, ami-chat.nvim, ami-inline.nvim, ...
-    fallback = false,
-  },
   ui = {
     icons = vim.g.have_nerd_font and {} or {
       cmd = "⌘",
