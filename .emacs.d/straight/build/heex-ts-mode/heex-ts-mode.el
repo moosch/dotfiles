@@ -1,0 +1,1 @@
+/Users/moosch/.emacs.d/straight/repos/heex-ts-mode/heex-ts-mode.el

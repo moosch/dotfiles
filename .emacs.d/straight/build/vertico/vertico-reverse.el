@@ -1,0 +1,1 @@
+/Users/moosch/.emacs.d/straight/repos/vertico/extensions/vertico-reverse.el

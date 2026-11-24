@@ -1,0 +1,1 @@
+/Users/moosch/.emacs.d/straight/repos/elixir-ts-mode/elixir-ts-mode.el

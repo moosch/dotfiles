@@ -1,0 +1,1 @@
+/Users/moosch/.emacs.d/straight/repos/xclip/xclip-pkg.el

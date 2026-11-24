@@ -1,0 +1,1 @@
+/Users/moosch/.emacs.d/straight/repos/diff-hl/diff-hl-amend.el
