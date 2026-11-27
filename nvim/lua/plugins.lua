@@ -344,6 +344,7 @@ return {
       moosch("ami-tools"),
       moosch("ami-luagent"),
       moosch("ami-context-diagnostic"),
+      moosch("ami-persona"),
       { url = "https://git.moosch.dev/moosch/ami-treesitter.nvim", name = "ami-context-treesitter" }, -- remote repo is named ami-treesitter
     },
     config = function()
@@ -363,6 +364,7 @@ return {
           "ami-luagent",
           "ami-context-diagnostic",
           "ami-context-treesitter",
+          "ami-persona",
         },
 
         context = {
@@ -372,7 +374,7 @@ return {
 
         tools = {
           -- workspace = nil,        -- nil = project root of the current buffer
-          groups  = { read = true, write = false, run = false },  -- write/run are opt-in
+          groups  = { read = true, write = true, run = false },   -- run is opt-in
           approve = { write = true, run = true },                 -- keep these true
           -- max_output_bytes = 10000, timeout_ms = 60000,
         },
@@ -408,7 +410,7 @@ return {
         agent = {
           -- endpoint/model/api_key: unset = the default model (:AmiModel agent to pick)
           max_steps = 25,            -- model requests before it asks to continue
-          tools     = { "read" },    -- add "write" / "run" here AND in tools.groups to allow them
+          tools     = { "read", "write" },  -- add "run" here AND in tools.groups to allow it
           ui = { position = "right", width = 0.4 },  -- "right" | "left" | "bottom" | "tab"
         },
 
@@ -422,6 +424,13 @@ return {
           scope   = "auto",          -- enclosing function: "auto" | "always" | false
           outline = "auto",
           imports = "auto",
+        },
+
+        persona = {
+          default  = { chat = "mentor", agent = "expert" }, -- persona name per target, used when nothing is saved
+          remember = true,                        -- save the selection and restore it on start
+          dir      = vim.fn.stdpath("config") .. "/ami/personas", -- custom persona files
+          personas = {},                          -- custom persona tables (see below)
         },
       })
     end,
